@@ -2,9 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { Resend } from 'resend';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-
 export async function POST(req: NextRequest) {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
   const sig = req.headers.get('stripe-signature');
 
   if (!sig) {
@@ -85,15 +84,19 @@ export async function POST(req: NextRequest) {
       `;
 
       if (customerEmail) {
-        const resend = new Resend(process.env.RESEND_API_KEY);
-        await resend.emails.send({
-          from: 'Hiveborn <orders@hiveborn.com>',
-          to: customerEmail,
-          bcc: 'orders@hiveborn.com', // Owner notification
-          subject: `Hiveborn Order Confirmation`,
-          html: emailHtml,
-        });
-        console.log('Order confirmation email sent to', customerEmail);
+        if (!process.env.RESEND_API_KEY) {
+          console.error('RESEND_API_KEY is not set - skipping email');
+        } else {
+          const resend = new Resend(process.env.RESEND_API_KEY);
+          await resend.emails.send({
+            from: 'Hiveborn <orders@hiveborn.com>',
+            to: customerEmail,
+            bcc: 'orders@hiveborn.com', // Owner notification
+            subject: `Hiveborn Order Confirmation`,
+            html: emailHtml,
+          });
+          console.log('Order confirmation email sent to', customerEmail);
+        }
       } else {
         console.warn('No customer email on session', fullSession.id);
       }

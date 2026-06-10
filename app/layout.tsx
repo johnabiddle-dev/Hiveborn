@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,14 +36,14 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-white text-zinc-950">
         <nav className="border-b">
           <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-            <a href="/" className="flex items-center gap-2">
+            <Link href="/" className="flex items-center gap-2">
               <img 
                 src="/images/logo.jpg" 
                 alt="Hiveborn" 
                 className="h-8 w-auto" 
               />
               <span className="font-semibold tracking-tighter text-2xl">Hiveborn</span>
-            </a>
+            </Link>
             <div className="flex items-center gap-6 text-sm">
               <a href="#products" className="hover:underline">Shop</a>
               <a href="/cart" className="hover:underline">Cart</a>

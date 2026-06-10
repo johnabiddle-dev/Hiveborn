@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
 interface VerifiedOrder {
@@ -8,20 +9,21 @@ interface VerifiedOrder {
   amountTotal?: number;
   isPickup?: boolean;
   customerName?: string | null;
-  shippingAddress?: any;
+  shippingAddress?: { address?: string; city?: string; state?: string; zip?: string } | null;
   items?: Array<{ name: string; amount: number; quantity: number }>;
 }
 
 export default function SuccessContent() {
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState<string>('');
   const [order, setOrder] = useState<VerifiedOrder | null>(null);
 
   useEffect(() => {
     const sessionId = searchParams.get('session_id');
 
     if (!sessionId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setStatus('error');
       setMessage('No payment session found.');
       return;
@@ -106,12 +108,12 @@ export default function SuccessContent() {
         <p className="text-red-600 mb-6">{message}</p>
       )}
 
-      <a 
+      <Link 
         href="/" 
         className="inline-block bg-black text-white px-8 py-3 rounded-2xl font-medium"
       >
         Back to Shop
-      </a>
+      </Link>
     </div>
   );
 }

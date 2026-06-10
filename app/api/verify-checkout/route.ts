@@ -31,16 +31,19 @@ export async function POST(request: NextRequest) {
       if (metadata.shippingAddress) {
         shippingAddress = JSON.parse(metadata.shippingAddress);
       }
-    } catch (e) {
+    } catch {
       // ignore parse error
     }
 
     // Build a simple order summary from line items
-    const items = (session.line_items?.data || []).map((li: any) => ({
-      name: li.description || li.price?.product?.name || 'Item',
-      amount: li.amount_total,
-      quantity: li.quantity,
-    }));
+    const items = (session.line_items?.data || []).map((li: unknown) => {
+      const l = li as { description?: string; price?: { product?: { name?: string } }; amount_total?: number; quantity?: number };
+      return {
+        name: l.description || l.price?.product?.name || 'Item',
+        amount: l.amount_total || 0,
+        quantity: l.quantity || 1,
+      };
+    });
 
     return NextResponse.json({
       verified: true,
@@ -52,7 +55,7 @@ export async function POST(request: NextRequest) {
       customerEmail: session.customer_details?.email || null,
       customerName: session.customer_details?.name || metadata.shippingName || null,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Stripe session verification error:', error);
     return NextResponse.json(
       { error: 'Failed to verify payment', verified: false },

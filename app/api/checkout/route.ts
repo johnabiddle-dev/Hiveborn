@@ -3,9 +3,11 @@ import Stripe from 'stripe';
 import { HONEY_PRODUCT_IDS } from '@/lib/products';
 
 export async function POST(request: NextRequest) {
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-
   try {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      return NextResponse.json({ error: 'Stripe secret key is not configured.' }, { status: 500 });
+    }
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
     const { items, shippingAddress, shippingCost: clientShippingCost, isPickup = false } = await request.json();
 
     if (!items || !Array.isArray(items) || items.length === 0) {
@@ -13,7 +15,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate honey shipping restriction (honey only to VA) — skipped for pickup
-    const hasHoneyItems = items.some((item: any) => HONEY_PRODUCT_IDS.includes(item.id));
+    const hasHoneyItems = items.some((item: unknown) => {
+      const i = item as { id: number };
+      return HONEY_PRODUCT_IDS.includes(i.id);
+    });
     const state = (shippingAddress?.state || '').toUpperCase().trim();
     if (!isPickup) {
       if (hasHoneyItems && state !== 'VA' && !state.includes('VIRGINIA')) {
@@ -34,17 +39,20 @@ export async function POST(request: NextRequest) {
     const shippingCost = isPickup ? 0 : (clientShippingCost || calculateShippingCents(items.length));
 
     // Convert cart items to Stripe line items
-    const lineItems = items.map((item: any) => ({
-      price_data: {
-        currency: 'usd',
-        product_data: {
-          name: item.name,
-          description: item.description,
+    const lineItems = items.map((item: unknown) => {
+      const i = item as { name: string; description: string; price: number; quantity: number };
+      return {
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: i.name,
+            description: i.description,
+          },
+          unit_amount: i.price,
         },
-        unit_amount: item.price,
-      },
-      quantity: item.quantity,
-    }));
+        quantity: i.quantity,
+      };
+    });
 
     // Add shipping as a line item only for delivery (not pickup)
     if (!isPickup) {
@@ -80,10 +88,11 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ url: session.url });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Stripe Checkout Error:', error);
+    const message = error instanceof Error ? error.message : 'Failed to create checkout session';
     return NextResponse.json(
-      { error: error.message || 'Failed to create checkout session' },
+      { error: message },
       { status: 500 }
     );
   }

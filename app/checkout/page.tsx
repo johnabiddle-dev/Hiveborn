@@ -50,6 +50,7 @@ export default function Checkout() {
       if (parsed.length === 0) {
         router.push('/');
       } else {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setCart(parsed);
       }
     } else {

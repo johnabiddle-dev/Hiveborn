@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
+
+
 interface CartItem {
   id: number;
   name: string;
@@ -17,7 +19,10 @@ export default function CartPage() {
 
   useEffect(() => {
     const saved = localStorage.getItem('hiveborn-cart');
-    if (saved) setCart(JSON.parse(saved));
+    if (saved) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setCart(JSON.parse(saved));
+    }
   }, []);
 
   const updateQuantity = (id: number, qty: number) => {

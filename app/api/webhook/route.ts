@@ -19,9 +19,10 @@ export async function POST(req: NextRequest) {
       sig,
       process.env.STRIPE_WEBHOOK_SECRET!
     );
-  } catch (err: any) {
-    console.error('Webhook signature verification failed:', err.message);
-    return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    console.error('Webhook signature verification failed:', message);
+    return NextResponse.json({ error: `Webhook Error: ${message}` }, { status: 400 });
   }
 
   // Handle successful checkout
@@ -36,30 +37,33 @@ export async function POST(req: NextRequest) {
 
       const metadata = fullSession.metadata || {};
       const isPickup = metadata.isPickup === 'true';
-      let shippingAddress: any = {};
+      let shippingAddress: unknown = {};
       try {
         if (metadata.shippingAddress) {
           shippingAddress = JSON.parse(metadata.shippingAddress);
         }
-      } catch (e) {
+      } catch {
         // ignore
       }
 
       const customerEmail = fullSession.customer_details?.email || '';
-      const customerName = fullSession.customer_details?.name || shippingAddress.name || 'Customer';
+      const sa = shippingAddress as { name?: string } | null;
+      const customerName = fullSession.customer_details?.name || sa?.name || 'Customer';
 
       // Build items list from line items (includes products + shipping if any)
-      const items = (fullSession.line_items?.data || []).map((item: any) => {
-        const name = item.description || 'Item';
-        const qty = item.quantity || 1;
-        const amount = (item.amount_total || 0) / 100;
+      const items = (fullSession.line_items?.data || []).map((item: unknown) => {
+        const i = item as { description?: string; quantity?: number; amount_total?: number };
+        const name = i.description || 'Item';
+        const qty = i.quantity || 1;
+        const amount = (i.amount_total || 0) / 100;
         return `${qty}× ${name} — $${amount.toFixed(2)}`;
       }).join('\n');
 
       const total = (fullSession.amount_total || 0) / 100;
+      const sa2 = shippingAddress as { name?: string; address?: string; city?: string; state?: string; zip?: string } | null;
       const fulfillment = isPickup
         ? 'Local Pickup — we will contact you to arrange a time and location.'
-        : `Shipping to:\n${shippingAddress.name || ''}\n${shippingAddress.address || ''}\n${shippingAddress.city || ''}, ${shippingAddress.state || ''} ${shippingAddress.zip || ''}`;
+        : `Shipping to:\n${sa2?.name || ''}\n${sa2?.address || ''}\n${sa2?.city || ''}, ${sa2?.state || ''} ${sa2?.zip || ''}`;
 
       const emailHtml = `
         <div style="font-family: system-ui, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">

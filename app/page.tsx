@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ShoppingCart, Plus, Minus, X } from 'lucide-react';
+import { ShoppingCart, Plus, X } from 'lucide-react';
 import { PRODUCTS, Product } from '@/lib/products';
+
+
 
 interface CartItem extends Product {
   quantity: number;
@@ -16,6 +18,7 @@ export default function HivebornShop() {
   useEffect(() => {
     const savedCart = localStorage.getItem('hiveborn-cart');
     if (savedCart) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCart(JSON.parse(savedCart));
     }
   }, []);

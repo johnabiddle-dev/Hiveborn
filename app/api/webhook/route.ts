@@ -3,6 +3,9 @@ import Stripe from 'stripe';
 import { Resend } from 'resend';
 
 export async function POST(req: NextRequest) {
+  // Webhook endpoint is registered in Stripe as https://www.hiveborn.com/api/webhook
+  // (see the "Hiveborn Checkout" destination in Stripe Dashboard → Webhooks).
+  // STRIPE_WEBHOOK_SECRET in Vercel must be the signing secret for that exact destination.
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
   const sig = req.headers.get('stripe-signature');
 
@@ -93,7 +96,7 @@ export async function POST(req: NextRequest) {
         } else {
           const resend = new Resend(process.env.RESEND_API_KEY);
           await resend.emails.send({
-            from: 'Hiveborn <orders@hiveborn.com>',
+            from: 'Hiveborn <onboarding@resend.dev>',
             to: customerEmail,
             bcc: 'orders@hiveborn.com', // Owner notification
             subject: `Hiveborn Order Confirmation`,

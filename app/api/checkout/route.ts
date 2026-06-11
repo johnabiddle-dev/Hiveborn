@@ -73,6 +73,8 @@ export async function POST(request: NextRequest) {
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
+      // NEXT_PUBLIC_APP_URL should be https://www.hiveborn.com (to match the live domain
+      // and the webhook destination registered in Stripe at https://www.hiveborn.com/api/webhook).
       success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/cart`,
       // We collect address on our form; still allow Stripe to confirm

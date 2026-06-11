@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
 
 
 
@@ -51,6 +52,7 @@ export default function RootLayout({
           </div>
         </nav>
         {children}
+        <Analytics />
         <footer className="border-t mt-auto py-8 text-xs text-zinc-500">
           <div className="max-w-6xl mx-auto px-6">© Hiveborn. Quality products, shipped with care.</div>
         </footer>

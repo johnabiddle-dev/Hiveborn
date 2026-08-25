@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import { HONEY_PRODUCT_IDS } from '@/lib/products';
+import { calculateShippingCents, resolveCartItems, toStripeLineItems } from '@/lib/checkout';
 
 export async function POST(request: NextRequest) {
   try {
@@ -8,17 +8,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Stripe secret key is not configured.' }, { status: 500 });
     }
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-    const { items, shippingAddress, shippingCost: clientShippingCost, isPickup = false } = await request.json();
+    const { items, shippingAddress, isPickup = false } = await request.json();
 
-    if (!items || !Array.isArray(items) || items.length === 0) {
-      return NextResponse.json({ error: 'Cart is empty' }, { status: 400 });
+    // Resolve every cart line against the server catalog (prices/names come from
+    // PRODUCTS, never from the client) so prices cannot be tampered with.
+    const resolved = resolveCartItems(items);
+    if (!resolved.ok) {
+      return NextResponse.json({ error: resolved.error }, { status: 400 });
     }
+    const { resolvedItems, hasHoneyItems } = resolved;
 
     // Validate honey shipping restriction (honey only to VA) — skipped for pickup
-    const hasHoneyItems = items.some((item: unknown) => {
-      const i = item as { id: number };
-      return HONEY_PRODUCT_IDS.includes(i.id);
-    });
     const state = (shippingAddress?.state || '').toUpperCase().trim();
     if (!isPickup) {
       if (hasHoneyItems && state !== 'VA' && !state.includes('VIRGINIA')) {
@@ -29,30 +29,12 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Calculate shipping (server authoritative)
-    const calculateShippingCents = (numItems: number) => {
-      if (numItems === 0) return 0;
-      const base = 1100; // minimum $11.00
-      const perAdditional = 400; // +$4 per additional item (simple volume proxy)
-      return base + (numItems - 1) * perAdditional;
-    };
-    const shippingCost = isPickup ? 0 : (clientShippingCost || calculateShippingCents(items.length));
+    // Calculate shipping (server authoritative). The client-provided shipping cost
+    // is intentionally ignored so it cannot be reduced to zero via tampering.
+    const shippingCost = isPickup ? 0 : calculateShippingCents(resolvedItems.length);
 
-    // Convert cart items to Stripe line items
-    const lineItems = items.map((item: unknown) => {
-      const i = item as { name: string; description: string; price: number; quantity: number };
-      return {
-        price_data: {
-          currency: 'usd',
-          product_data: {
-            name: i.name,
-            description: i.description,
-          },
-          unit_amount: i.price,
-        },
-        quantity: i.quantity,
-      };
-    });
+    // Convert resolved (server-priced) cart items to Stripe line items
+    const lineItems = toStripeLineItems(resolvedItems);
 
     // Add shipping as a line item only for delivery (not pickup)
     if (!isPickup) {

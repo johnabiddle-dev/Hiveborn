@@ -31,8 +31,8 @@ export const PRODUCTS: Product[] = [
   {
     id: 3,
     name: "Hive Fresh Hand Harvested Honey 1 pint",
-    price: 1800,
-    description: "1 pint jar of fresh, hand-harvested honey from the hive.",
+    price: 2000,
+    description: "1 pint jar (20 oz by weight) of fresh, hand-harvested honey from the hive.",
     image: "/images/honey-large.jpeg",
   },
   {

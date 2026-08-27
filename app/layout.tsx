@@ -45,8 +45,8 @@ export default function RootLayout({
               <span className="font-semibold tracking-tighter text-2xl hidden sm:inline">Hiveborn</span>
             </Link>
             <div className="flex items-center gap-4 sm:gap-6 text-sm shrink-0">
-              <a href="/#products" className="hover:underline">Shop</a>
-              <a href="/cart" className="hover:underline">Cart</a>
+              <Link href="/#products" className="hover:underline">Shop</Link>
+              <Link href="/cart" className="hover:underline">Cart</Link>
               <span className="flex items-center gap-4 hidden sm:flex text-sm">
                 <a href="https://www.instagram.com/hivebornhoney/" target="_blank" rel="noopener noreferrer" className="hover:underline">Instagram</a>
                 <a href="https://www.facebook.com/p/Hiveborn-61578893080880/" target="_blank" rel="noopener noreferrer" className="hover:underline">Facebook</a>

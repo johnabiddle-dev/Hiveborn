@@ -2,9 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { ShoppingCart, Plus, X } from 'lucide-react';
-import { PRODUCTS, Product } from '@/lib/products';
-
-
+import { PRODUCTS, Product, FEATURED_PRODUCT_ID, productShipNote } from '@/lib/products';
+import { CONTACT_EMAIL, COPY, PICKUP_ADDRESS } from '@/lib/copy';
 
 interface CartItem extends Product {
   quantity: number;
@@ -66,58 +65,86 @@ export default function HivebornShop() {
     <div className="min-h-screen bg-white">
       {/* Hero */}
       <div className="border-b bg-amber-50">
-        <div className="max-w-6xl mx-auto px-6 py-20 text-center">
-          <img 
-            src="/images/logo.jpg" 
-            alt="Hiveborn" 
-            className="h-28 w-auto mx-auto mb-8" 
+        <div className="max-w-6xl mx-auto px-6 py-8 sm:py-16 text-center">
+          <img
+            src="/images/logo.jpg"
+            alt="Hiveborn"
+            className="h-16 sm:h-28 w-auto mx-auto mb-4 sm:mb-8"
           />
-          <p className="text-2xl font-medium text-zinc-700 max-w-md mx-auto mb-8 tracking-tight">
+          <p className="text-xl sm:text-2xl font-medium text-zinc-700 max-w-md mx-auto tracking-tight">
             Local. Raw. Unfiltered. Perfect.
           </p>
-          <a 
-            href="#products" 
+          <p className="text-sm sm:text-base text-zinc-600 mt-2 mb-5 sm:mb-8">
+            {COPY.heroSub}
+          </p>
+          <a
+            href="#products"
             className="inline-block bg-black text-white px-8 py-3 rounded-2xl font-medium hover:bg-zinc-800 transition-colors"
           >
             Shop Now
           </a>
+          <p className="text-sm text-zinc-700 mt-3 max-w-sm mx-auto">
+            {COPY.heroPickup}
+          </p>
         </div>
       </div>
 
+      {/* About */}
+      <div className="max-w-2xl mx-auto px-6 py-10 sm:py-12 text-sm sm:text-base text-zinc-700 leading-relaxed">
+        <h2 className="text-xl font-semibold tracking-tight text-black mb-3">About the farm</h2>
+        <p>
+          We keep bees in New Market, Virginia, and harvest by hand. The honey is raw and unfiltered — the same jars we sell at the farm. Reaper Infused Hot Honey is our spicy jar. Email{' '}
+          <a href={`mailto:${CONTACT_EMAIL}`} className="underline">{CONTACT_EMAIL}</a>
+          {' '}to schedule pickup at the apiary on Saturday or Sunday — we have to know you are coming. When you pick up you can see the bees that made it. Pickup is at {PICKUP_ADDRESS}. Honey orders ship inside Virginia only. Summer Lotion and Honey Dippers ship continental US.
+        </p>
+      </div>
+
       {/* Products */}
-      <div id="products" className="max-w-6xl mx-auto px-6 py-16">
+      <div id="products" className="max-w-6xl mx-auto px-6 pb-16">
         <h2 className="text-4xl font-semibold tracking-tighter mb-2 text-center">Our Products</h2>
         <p className="text-center text-zinc-600 mb-12 max-w-md mx-auto">
           Carefully crafted from the hive.
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {PRODUCTS.map((product) => (
-            <div key={product.id} className="group border rounded-3xl overflow-hidden bg-white flex flex-col">
-              <div className="aspect-[4/3] bg-zinc-100 overflow-hidden">
-                <img 
-                  src={product.image} 
-                  alt={product.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-              </div>
-              <div className="p-6 flex-1 flex flex-col">
-                <div>
-                  <h3 className="font-semibold text-xl tracking-tight">{product.name}</h3>
-                  <p className="text-2xl font-medium mt-1 tracking-tighter">
-                    ${(product.price / 100).toFixed(2)}
-                  </p>
-                  <p className="text-sm text-zinc-600 mt-3 leading-relaxed">{product.description}</p>
+          {PRODUCTS.map((product) => {
+            const featured = product.id === FEATURED_PRODUCT_ID;
+            return (
+              <div
+                key={product.id}
+                className={`group rounded-3xl overflow-hidden bg-white flex flex-col ${featured ? 'border-2 border-amber-500 md:col-span-2 lg:col-span-2' : 'border'}`}
+              >
+                <div className="aspect-[4/3] bg-zinc-100 overflow-hidden relative">
+                  {featured && (
+                    <span className="absolute top-3 left-3 z-10 bg-amber-500 text-black text-[11px] font-semibold px-2.5 py-1 rounded-full">
+                      Our spicy jar
+                    </span>
+                  )}
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
                 </div>
-                <button
-                  onClick={() => addToCart(product)}
-                  className="mt-auto w-full bg-black text-white py-3 rounded-2xl font-medium flex items-center justify-center gap-2 hover:bg-zinc-800 active:scale-[0.985] transition-all mt-6"
-                >
-                  <Plus size={16} /> Add to Cart
-                </button>
+                <div className="p-6 flex-1 flex flex-col">
+                  <div>
+                    <h3 className="font-semibold text-xl tracking-tight">{product.name}</h3>
+                    <p className="text-2xl font-medium mt-1 tracking-tighter">
+                      ${(product.price / 100).toFixed(2)}
+                    </p>
+                    <p className="text-sm text-zinc-600 mt-3 leading-relaxed">{product.description}</p>
+                    <p className="text-xs text-zinc-500 mt-3">{productShipNote(product.id)}</p>
+                  </div>
+                  <button
+                    onClick={() => addToCart(product)}
+                    className="mt-auto w-full bg-black text-white py-3 rounded-2xl font-medium flex items-center justify-center gap-2 hover:bg-zinc-800 active:scale-[0.985] transition-all mt-6"
+                  >
+                    <Plus size={16} /> Add to Cart
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
@@ -150,7 +177,7 @@ export default function HivebornShop() {
                       <div className="flex-1 min-w-0">
                         <div className="font-medium">{item.name}</div>
                         <div className="text-sm text-zinc-600">${(item.price / 100).toFixed(2)} each</div>
-                        
+
                         <div className="flex items-center gap-3 mt-2">
                           <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="border w-8 h-8 flex items-center justify-center rounded active:bg-zinc-100">-</button>
                           <span>{item.quantity}</span>
@@ -170,14 +197,14 @@ export default function HivebornShop() {
                     <div>Total</div>
                     <div>${cartTotal.toFixed(2)}</div>
                   </div>
-                  <a 
-                    href="/checkout" 
+                  <a
+                    href="/checkout"
                     onClick={() => setIsCartOpen(false)}
                     className="block w-full bg-black text-white text-center py-3.5 rounded-2xl font-medium active:bg-zinc-800"
                   >
                     Proceed to Checkout
                   </a>
-                  <p className="text-[10px] text-center text-zinc-500 mt-3">Shipping starts at $11 or free local pickup (see checkout for details)</p>
+                  <p className="text-[10px] text-center text-zinc-500 mt-3">{COPY.cartDrawerNote}</p>
                 </div>
               </>
             )}
@@ -189,8 +216,8 @@ export default function HivebornShop() {
       <div className="max-w-6xl mx-auto px-6 py-12 border-t text-sm text-zinc-600">
         <div className="grid md:grid-cols-3 gap-8">
           <div>
-            <div className="font-medium text-black mb-1">Shipping Policy</div>
-            <p>All honey products ship only to Virginia (or available for local pickup); Summer Lotion and Dipper ship to continental US or local pickup. Orders ship within 1-2 business days or ready for pickup.</p>
+            <div className="font-medium text-black mb-1">Pickup & shipping</div>
+            <p>{COPY.pickupShippingBlurb}</p>
           </div>
           <div>
             <div className="font-medium text-black mb-1">Satisfaction guaranteed</div>
@@ -198,7 +225,7 @@ export default function HivebornShop() {
           </div>
           <div>
             <div className="font-medium text-black mb-1">Questions?</div>
-            <p>Email us at orders@hiveborn.com — we reply fast.</p>
+            <p>Email us at <a href={`mailto:${CONTACT_EMAIL}`} className="underline">{CONTACT_EMAIL}</a> — we reply fast.</p>
           </div>
         </div>
       </div>

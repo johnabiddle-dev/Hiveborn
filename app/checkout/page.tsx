@@ -3,6 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { HONEY_PRODUCT_IDS } from '@/lib/products';
+import { calculateShippingCents } from '@/lib/checkout';
+import { CONTACT_EMAIL, COPY } from '@/lib/copy';
+import { US_STATES } from '@/lib/us-states';
 
 interface CartItem {
   id: number;
@@ -12,36 +15,42 @@ interface CartItem {
   quantity: number;
 }
 
+function isVirginia(state: string) {
+  const a = state.toUpperCase().trim();
+  return a === 'VA' || a.includes('VIRGINIA');
+}
+
+function isNonContinental(state: string) {
+  const a = state.toUpperCase().trim();
+  return a === 'AK' || a === 'HI' || a.includes('ALASKA') || a.includes('HAWAII');
+}
+
 export default function Checkout() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [shipping, setShipping] = useState({
     name: '',
+    email: '',
+    phone: '',
     address: '',
     city: '',
-    state: '',
+    state: 'VA',
     zip: '',
     country: 'US',
   });
-  const [isPickup, setIsPickup] = useState(false);
+  const [isPickup, setIsPickup] = useState(true);
 
   const router = useRouter();
 
   const hasHoneyItems = cart.some(item => HONEY_PRODUCT_IDS.includes(item.id));
-
-  const calculateShippingCents = (numItems: number) => {
-    if (numItems === 0) return 0;
-    const base = 1100; // minimum $11.00
-    const perAdditional = 400; // +$4 per additional item (proxy for volume)
-    return base + (numItems - 1) * perAdditional;
-  };
-
   const shippingCostCents = isPickup ? 0 : calculateShippingCents(cart.length);
   const productsTotalCents = cart.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
   const grandTotalCents = productsTotalCents + shippingCostCents;
+  const honeyBlocked = !isPickup && hasHoneyItems && !isVirginia(shipping.state);
+  const continentalBlocked = !isPickup && !hasHoneyItems && isNonContinental(shipping.state);
 
   useEffect(() => {
     const savedCart = localStorage.getItem('hiveborn-cart');
@@ -64,19 +73,22 @@ export default function Checkout() {
   };
 
   const handleCheckout = async () => {
-    if (!shipping.name || !shipping.address || !shipping.city || !shipping.state || !shipping.zip) {
+    if (!shipping.name || !shipping.email || !shipping.phone) {
+      alert('Please fill out name, email, and phone so we can reach you.');
+      return;
+    }
+    if (!shipping.address || !shipping.city || !shipping.state || !shipping.zip) {
       alert('Please fill out all contact / shipping fields.');
       return;
     }
 
-    const stateUpper = shipping.state.toUpperCase().trim();
     if (!isPickup) {
-      if (hasHoneyItems && stateUpper !== 'VA' && !stateUpper.includes('VIRGINIA')) {
-        alert('All honey products can only be shipped to Virginia addresses.');
+      if (hasHoneyItems && !isVirginia(shipping.state)) {
+        alert(COPY.honeyOutsideVaAlert);
         return;
       }
-      if (!hasHoneyItems && (stateUpper === 'AK' || stateUpper === 'HI' || stateUpper.includes('ALASKA') || stateUpper.includes('HAWAII'))) {
-        alert('We only ship to the continental US for non-honey items (Summer Lotion and Dipper).');
+      if (!hasHoneyItems && isNonContinental(shipping.state)) {
+        alert(COPY.continentalOnly);
         return;
       }
     }
@@ -92,13 +104,14 @@ export default function Checkout() {
           shippingAddress: shipping,
           shippingCost: shippingCostCents,
           isPickup,
+          email: shipping.email,
+          phone: shipping.phone,
         }),
       });
 
       const data = await res.json();
 
       if (data.url) {
-        // Redirect to Stripe Checkout
         window.location.href = data.url;
       } else {
         alert(data.error || 'Something went wrong with checkout.');
@@ -115,9 +128,14 @@ export default function Checkout() {
     return <div className="p-12 text-center">Loading cart...</div>;
   }
 
+  const payLabel = isPickup
+    ? `Pay $${(grandTotalCents / 100).toFixed(2)} — apiary pickup`
+    : `Pay $${(grandTotalCents / 100).toFixed(2)} with Stripe`;
+
   return (
     <div className="max-w-2xl mx-auto px-6 py-12">
-      <h1 className="text-4xl font-semibold tracking-tighter mb-8">Checkout</h1>
+      <h1 className="text-4xl font-semibold tracking-tighter mb-2">Checkout</h1>
+      <p className="text-sm text-zinc-600 mb-8">{COPY.checkoutIntro}</p>
 
       {/* Order Summary */}
       <div className="mb-10 border rounded-3xl p-6">
@@ -132,42 +150,53 @@ export default function Checkout() {
         ))}
         <div className="flex justify-between text-sm pt-2">
           <div>Products</div>
-          <div>${(cart.reduce((sum, item) => sum + item.price * item.quantity, 0) / 100).toFixed(2)}</div>
+          <div>${(productsTotalCents / 100).toFixed(2)}</div>
         </div>
         <div className="flex justify-between text-sm">
-          <div>{isPickup ? 'Pickup (no shipping charge)' : `Shipping (min $11, volume-based${hasHoneyItems ? ', honey to VA only' : ''})`}</div>
+          <div>
+            {isPickup
+              ? COPY.checkoutPickupLine
+              : hasHoneyItems
+                ? COPY.checkoutShippingHoney
+                : COPY.checkoutShippingOther}
+          </div>
           <div>${(shippingCostCents / 100).toFixed(2)}</div>
         </div>
         <div className="flex justify-between font-semibold text-lg pt-4 border-t">
-          <div>Total</div>
+          <div>{isPickup ? COPY.checkoutPickupTotal : 'Total'}</div>
           <div>${(grandTotalCents / 100).toFixed(2)}</div>
         </div>
-        <p className="text-xs text-zinc-500 mt-1">{isPickup ? 'Address information collected for order processing and pickup coordination. No shipping charged.' : 'Honey products can only be shipped to Virginia addresses. Shipping calculated server-side.'}</p>
       </div>
 
       {/* Shipping Address / Pickup Details */}
       <div className="mb-10">
         <h2 className="font-semibold mb-4 text-xl tracking-tight">{isPickup ? 'Pickup / Contact Information' : 'Shipping Address'}</h2>
-        <label className="flex items-center gap-2 text-sm mb-4 cursor-pointer select-none">
+        <label className="flex items-start gap-3 text-sm mb-4 cursor-pointer select-none rounded-2xl border-2 border-amber-500 bg-amber-50 p-4">
           <input
             type="checkbox"
             checked={isPickup}
             onChange={(e) => setIsPickup(e.target.checked)}
-            className="w-4 h-4 accent-black"
+            className="w-5 h-5 mt-0.5 accent-black shrink-0"
           />
-          This is a local pickup order — no shipping fee will be charged (address still required for order processing)
+          <span>
+            <span className="font-semibold text-black">{COPY.checkoutPickupLabel}</span>
+            <span className="block text-zinc-600 mt-0.5">{COPY.checkoutPickupHint}</span>
+            <span className="block text-zinc-600 mt-0.5">{COPY.checkoutUncheck}</span>
+          </span>
         </label>
-        <p className="text-sm text-zinc-600 mb-4">
-          {isPickup ? (
-            'Please provide your contact details for pickup coordination and order records. No shipping will be charged.'
-          ) : (
-            <>
-              Shipping is a minimum of $11.00 (higher depending on order volume). 
-              All honey products can <strong>only</strong> be shipped to Virginia. 
-              Summer Lotion and Honey Dipper ship to the continental US.
-            </>
-          )}
-        </p>
+        {!isPickup && (
+          <p className="text-sm text-zinc-600 mb-4">{COPY.checkoutShippingNote}</p>
+        )}
+        {honeyBlocked && (
+          <p className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-2xl p-3 mb-4">
+            {COPY.honeyOutsideVa}
+          </p>
+        )}
+        {continentalBlocked && (
+          <p className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-2xl p-3 mb-4">
+            {COPY.continentalOnly}
+          </p>
+        )}
         <div className="grid grid-cols-1 gap-4">
           <input
             type="text"
@@ -177,6 +206,27 @@ export default function Checkout() {
             onChange={handleInputChange}
             className="border p-3 rounded-2xl"
             required
+            autoComplete="name"
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={shipping.email}
+            onChange={handleInputChange}
+            className="border p-3 rounded-2xl"
+            required
+            autoComplete="email"
+          />
+          <input
+            type="tel"
+            name="phone"
+            placeholder="Phone"
+            value={shipping.phone}
+            onChange={handleInputChange}
+            className="border p-3 rounded-2xl"
+            required
+            autoComplete="tel"
           />
           <input
             type="text"
@@ -186,6 +236,7 @@ export default function Checkout() {
             onChange={handleInputChange}
             className="border p-3 rounded-2xl"
             required
+            autoComplete="street-address"
           />
           <div className="grid grid-cols-2 gap-4">
             <input
@@ -196,53 +247,50 @@ export default function Checkout() {
               onChange={handleInputChange}
               className="border p-3 rounded-2xl"
               required
-            />
-            <input
-              type="text"
-              name="state"
-              placeholder="State / Province"
-              value={shipping.state}
-              onChange={handleInputChange}
-              className="border p-3 rounded-2xl"
-              required
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <input
-              type="text"
-              name="zip"
-              placeholder="ZIP / Postal Code"
-              value={shipping.zip}
-              onChange={handleInputChange}
-              className="border p-3 rounded-2xl"
-              required
+              autoComplete="address-level2"
             />
             <select
-              name="country"
-              value={shipping.country}
+              name="state"
+              value={shipping.state}
               onChange={handleInputChange}
-              className="border p-3 rounded-2xl"
+              className="border p-3 rounded-2xl bg-white"
+              required
             >
-              <option value="US">United States</option>
-              <option value="CA">Canada</option>
+              {US_STATES.map((s) => (
+                <option key={s.code} value={s.code}>{s.name}</option>
+              ))}
             </select>
           </div>
+          <input
+            type="text"
+            name="zip"
+            placeholder="ZIP"
+            value={shipping.zip}
+            onChange={handleInputChange}
+            className="border p-3 rounded-2xl"
+            required
+            autoComplete="postal-code"
+          />
+          <p className="text-xs text-zinc-500">United States only.</p>
         </div>
       </div>
 
       <button
         onClick={handleCheckout}
-        disabled={isLoading}
+        disabled={isLoading || honeyBlocked || continentalBlocked}
         className="w-full bg-black text-white py-4 rounded-2xl font-semibold text-lg disabled:opacity-70 active:bg-zinc-800"
       >
-        {isLoading ? 'Processing...' : `Pay $${(grandTotalCents / 100).toFixed(2)} with Stripe`}
+        {isLoading ? 'Processing...' : payLabel}
       </button>
 
       <p className="text-xs text-center text-zinc-500 mt-4">
-        {isPickup 
-          ? 'Local pickup selected — no shipping charged. You will be redirected to Stripe to complete payment.' 
-          : 'Shipping starts at $11 (volume-based). Honey products only to Virginia. You will be redirected to Stripe to complete payment.'}
+        {isPickup ? COPY.checkoutPickupFooter : COPY.checkoutShipFooter}
       </p>
+      {isPickup && (
+        <p className="text-xs text-center text-zinc-500 mt-2">
+          After you pay, email <a href={`mailto:${CONTACT_EMAIL}`} className="underline">{CONTACT_EMAIL}</a> to pick a Saturday or Sunday.
+        </p>
+      )}
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { Resend } from 'resend';
+import { COPY } from '@/lib/copy';
 
 export async function POST(req: NextRequest) {
   // Webhook endpoint is registered in Stripe as https://www.hiveborn.com/api/webhook
@@ -65,7 +66,7 @@ export async function POST(req: NextRequest) {
       const total = (fullSession.amount_total || 0) / 100;
       const sa2 = shippingAddress as { name?: string; address?: string; city?: string; state?: string; zip?: string } | null;
       const fulfillment = isPickup
-        ? 'Local Pickup — we will contact you to arrange a time and location.'
+        ? COPY.webhookPickup
         : `Shipping to:\n${sa2?.name || ''}\n${sa2?.address || ''}\n${sa2?.city || ''}, ${sa2?.state || ''} ${sa2?.zip || ''}`;
 
       const emailHtml = `

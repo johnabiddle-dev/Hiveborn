@@ -93,9 +93,8 @@ export default function HivebornShop() {
       <div className="max-w-2xl mx-auto px-6 py-10 sm:py-12 text-sm sm:text-base text-zinc-700 leading-relaxed">
         <h2 className="text-xl font-semibold tracking-tight text-black mb-3">About the farm</h2>
         <p>
-          We keep bees in New Market, Virginia, and harvest by hand. The honey is raw and unfiltered — the same jars we sell at the farm. Reaper Infused Hot Honey is our spicy jar. Email{' '}
-          <a href={`mailto:${CONTACT_EMAIL}`} className="underline">{CONTACT_EMAIL}</a>
-          {' '}to schedule pickup at the apiary on Saturday or Sunday — we have to know you are coming. When you pick up you can see the bees that made it. Pickup is at {PICKUP_ADDRESS}. Honey orders ship inside Virginia only. Summer Lotion and Honey Dippers ship continental US.
+          We keep bees in New Market, Virginia, and harvest by hand. The honey is raw and unfiltered — the same jars we sell at the farm. Reaper Infused Hot Honey is our spicy jar. Order online and pick up Saturday or Sunday at the house at {PICKUP_ADDRESS} — we know you are coming because you ordered. When you pick up you can see the bees that made it. Honey orders ship inside Virginia only. Summer Lotion and Honey Dippers ship continental US. Questions:{' '}
+          <a href={`mailto:${CONTACT_EMAIL}`} className="underline">{CONTACT_EMAIL}</a>.
         </p>
       </div>
 

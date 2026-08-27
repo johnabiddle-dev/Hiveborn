@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { Resend } from 'resend';
-import { COPY } from '@/lib/copy';
+import { CONTACT_EMAIL, COPY } from '@/lib/copy';
 
 export async function POST(req: NextRequest) {
   // Webhook endpoint is registered in Stripe as https://www.hiveborn.com/api/webhook
@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
           <h2 style="margin-top: 24px; font-size: 18px;">Fulfillment</h2>
           <p>${fulfillment.replace(/\n/g, '<br>')}</p>
           
-          <p style="margin-top: 24px;">If you have any questions, reply to this email or contact us at orders@hiveborn.com.</p>
+          <p style="margin-top: 24px;">If you have any questions, reply to this email or contact us at ${CONTACT_EMAIL}.</p>
           
           <p style="color: #666; font-size: 12px; margin-top: 32px;">
             Hiveborn • Quality products from the hive.
@@ -99,7 +99,7 @@ export async function POST(req: NextRequest) {
           await resend.emails.send({
             from: 'Hiveborn <onboarding@resend.dev>',
             to: customerEmail,
-            bcc: 'orders@hiveborn.com', // Owner notification
+            bcc: CONTACT_EMAIL, // Owner notification
             subject: `Hiveborn Order Confirmation`,
             html: emailHtml,
           });

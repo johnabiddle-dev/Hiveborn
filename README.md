@@ -6,7 +6,7 @@ The site is live on the custom domain at **hiveborn.com** (www.hiveborn.com).
 
 Webhook is registered at `https://www.hiveborn.com/api/webhook`.
 
-You monitor orders primarily through the Stripe dashboard (Payments section). The webhook still runs for any server-side logic and attempts to send a confirmation email as a bonus (from `onboarding@resend.dev` with BCC to `orders@hiveborn.com`).
+You monitor orders primarily through the Stripe dashboard (Payments section). The webhook still runs for any server-side logic and attempts to send a confirmation email as a bonus (from `onboarding@resend.dev` with BCC to `johnabiddle@gmail.com`).
 
 ---
 

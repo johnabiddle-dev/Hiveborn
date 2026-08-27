@@ -288,7 +288,8 @@ export default function Checkout() {
       </p>
       {isPickup && (
         <p className="text-xs text-center text-zinc-500 mt-2">
-          After you pay, email <a href={`mailto:${CONTACT_EMAIL}`} className="underline">{CONTACT_EMAIL}</a> to pick a Saturday or Sunday.
+          After you pay, pick up Saturday or Sunday at the house. Questions:{' '}
+          <a href={`mailto:${CONTACT_EMAIL}`} className="underline">{CONTACT_EMAIL}</a>.
         </p>
       )}
     </div>

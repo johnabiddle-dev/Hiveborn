@@ -8,7 +8,7 @@ export interface Product {
   image: string; // URL or path
 }
 
-export const HONEY_PRODUCT_IDS = [2, 3, 4]; // Honey 1/2 pint, Honey 1 pint, Reaper Infused Hot Honey 1/2 pint
+export const HONEY_PRODUCT_IDS = [2, 3, 4]; // Honey 1/2 pint, pint jar 20 oz, Reaper Infused Hot Honey 1/2 pint
 export const FEATURED_PRODUCT_ID = 4;
 
 // Products from https://www.hiveborn.com
@@ -30,9 +30,9 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: 3,
-    name: "Hive Fresh Hand Harvested Honey 1 pint",
+    name: "Hive Fresh Hand Harvested Honey — pint jar (20 oz by weight)",
     price: 2000,
-    description: "1 pint jar (20 oz by weight) of fresh, hand-harvested honey from the hive.",
+    description: "Pint jar containing 20 oz of honey by weight. Fresh, hand-harvested from the hive.",
     image: "/images/honey-large.jpeg",
   },
   {

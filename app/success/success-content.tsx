@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { COPY } from '@/lib/copy';
 
 interface VerifiedOrder {
   verified: boolean;
@@ -44,7 +45,7 @@ export default function SuccessContent() {
           setOrder(data);
 
           const pickupText = data.isPickup
-            ? 'Your order is marked for local pickup. We will contact you to arrange a time.'
+            ? COPY.successPickup
             : 'Your order will be shipped to the address you provided.';
 
           setMessage(`Thank you! Payment confirmed. ${pickupText}`);
@@ -68,9 +69,9 @@ export default function SuccessContent() {
   return (
     <div className="max-w-md mx-auto px-6 py-20 text-center">
       <h1 className="text-4xl font-semibold tracking-tighter mb-4">Order Confirmed</h1>
-      
+
       {status === 'loading' && <p>Processing your order...</p>}
-      
+
       {status === 'success' && (
         <>
           <p className="text-xl text-emerald-600 mb-6">{message}</p>
@@ -85,7 +86,7 @@ export default function SuccessContent() {
               )}
               {order.isPickup !== undefined && (
                 <div className="mb-1 font-medium">
-                  {order.isPickup ? '✓ Local pickup' : '✓ Shipping'}
+                  {order.isPickup ? COPY.successPickupBadge : '✓ Shipping'}
                 </div>
               )}
               {order.shippingAddress?.address && (
@@ -108,8 +109,8 @@ export default function SuccessContent() {
         <p className="text-red-600 mb-6">{message}</p>
       )}
 
-      <Link 
-        href="/" 
+      <Link
+        href="/"
         className="inline-block bg-black text-white px-8 py-3 rounded-2xl font-medium"
       >
         Back to Shop

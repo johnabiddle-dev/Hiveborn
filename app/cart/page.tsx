@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-
-
+import { COPY } from '@/lib/copy';
 
 interface CartItem {
   id: number;
@@ -27,7 +26,7 @@ export default function CartPage() {
 
   const updateQuantity = (id: number, qty: number) => {
     if (qty < 1) return;
-    const updated = cart.map(item => 
+    const updated = cart.map(item =>
       item.id === id ? { ...item, quantity: qty } : item
     );
     setCart(updated);
@@ -81,14 +80,14 @@ export default function CartPage() {
         <div>${total.toFixed(2)}</div>
       </div>
 
-      <Link 
-        href="/checkout" 
+      <Link
+        href="/checkout"
         className="block text-center bg-black text-white py-4 rounded-2xl font-semibold text-lg"
       >
         Continue to Checkout
       </Link>
 
-      <p className="text-center text-xs text-zinc-500 mt-4">Shipping starts at $11.00 (higher based on volume) or free local pickup available. All honey products ship only to Virginia or local pickup; Summer Lotion and Dipper ship to continental US or local pickup.</p>
+      <p className="text-center text-xs text-zinc-500 mt-4">{COPY.cartPageNote}</p>
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { ShoppingCart, Plus, X } from 'lucide-react';
-import { PRODUCTS, Product, FEATURED_PRODUCT_ID, productShipNote } from '@/lib/products';
+import { PRODUCTS, Product, FEATURED_PRODUCT_ID, isPurchasable, productShipNote } from '@/lib/products';
 import { CONTACT_EMAIL, COPY, PICKUP_ADDRESS } from '@/lib/copy';
 
 interface CartItem extends Product {
@@ -13,12 +13,13 @@ export default function HivebornShop() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  // Load cart from localStorage
+  // Load cart from localStorage (drop unavailable SKUs so they cannot be checked out)
   useEffect(() => {
     const savedCart = localStorage.getItem('hiveborn-cart');
     if (savedCart) {
+      const parsed = JSON.parse(savedCart) as CartItem[];
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setCart(JSON.parse(savedCart));
+      setCart(parsed.filter((item) => isPurchasable(item.id)));
     }
   }, []);
 
@@ -28,6 +29,7 @@ export default function HivebornShop() {
   }, [cart]);
 
   const addToCart = (product: Product) => {
+    if (!product.inStock) return;
     setCart((current) => {
       const existing = current.find((item) => item.id === product.id);
       if (existing) {
@@ -93,7 +95,7 @@ export default function HivebornShop() {
       <div className="max-w-2xl mx-auto px-6 py-10 sm:py-12 text-sm sm:text-base text-zinc-700 leading-relaxed">
         <h2 className="text-xl font-semibold tracking-tight text-black mb-3">About the farm</h2>
         <p>
-          We keep bees in New Market, Virginia, and harvest by hand. The honey is raw and unfiltered — the same jars we sell at the farm. Reaper Infused Hot Honey is our spicy jar. Order online and pick up Saturday or Sunday at the house at {PICKUP_ADDRESS} — we know you are coming because you ordered. When you pick up you can see the bees that made it. Honey orders ship inside Virginia only. Summer Lotion and Honey Dippers ship continental US. Questions:{' '}
+          We keep bees in New Market, Virginia, and harvest by hand. The honey is raw and unfiltered — the same jars we sell at the farm. Reaper Infused Hot Honey is our spicy jar. Order online, then email {CONTACT_EMAIL} to schedule pickup at the house at {PICKUP_ADDRESS}. Hours vary; email first. When you pick up you can see the bees that made it. Honey orders ship inside Virginia only. Summer Lotion and Honey Dippers ship continental US. Questions:{' '}
           <a href={`mailto:${CONTACT_EMAIL}`} className="underline">{CONTACT_EMAIL}</a>.
         </p>
       </div>
@@ -119,6 +121,11 @@ export default function HivebornShop() {
                       Our spicy jar
                     </span>
                   )}
+                  {!product.inStock && (
+                    <span className={`absolute top-3 z-10 bg-zinc-800 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full ${featured ? 'right-3' : 'left-3'}`}>
+                      {COPY.comingSoon}
+                    </span>
+                  )}
                   <img
                     src={product.image}
                     alt={product.name}
@@ -134,12 +141,23 @@ export default function HivebornShop() {
                     <p className="text-sm text-zinc-600 mt-3 leading-relaxed">{product.description}</p>
                     <p className="text-xs text-zinc-500 mt-3">{productShipNote(product.id)}</p>
                   </div>
-                  <button
-                    onClick={() => addToCart(product)}
-                    className="mt-auto w-full bg-black text-white py-3 rounded-2xl font-medium flex items-center justify-center gap-2 hover:bg-zinc-800 active:scale-[0.985] transition-all mt-6"
-                  >
-                    <Plus size={16} /> Add to Cart
-                  </button>
+                  {product.inStock ? (
+                    <button
+                      onClick={() => addToCart(product)}
+                      className="mt-auto w-full bg-black text-white py-3 rounded-2xl font-medium flex items-center justify-center gap-2 hover:bg-zinc-800 active:scale-[0.985] transition-all mt-6"
+                    >
+                      <Plus size={16} /> Add to Cart
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      disabled
+                      aria-disabled="true"
+                      className="mt-auto w-full bg-zinc-200 text-zinc-600 py-3 rounded-2xl font-medium mt-6 cursor-not-allowed"
+                    >
+                      {COPY.comingSoon}
+                    </button>
+                  )}
                 </div>
               </div>
             );

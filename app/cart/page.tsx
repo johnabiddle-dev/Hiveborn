@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { COPY } from '@/lib/copy';
+import { keepSellableCartItems } from '@/lib/products';
 
 interface CartItem {
   id: number;
@@ -19,8 +20,10 @@ export default function CartPage() {
   useEffect(() => {
     const saved = localStorage.getItem('hiveborn-cart');
     if (saved) {
+      const next = keepSellableCartItems(JSON.parse(saved) as CartItem[]);
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setCart(JSON.parse(saved));
+      setCart(next);
+      localStorage.setItem('hiveborn-cart', JSON.stringify(next));
     }
   }, []);
 

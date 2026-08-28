@@ -8,31 +8,18 @@ export interface Product {
   image: string; // URL or path
 }
 
-export const HONEY_PRODUCT_IDS = [2, 3, 4]; // Honey 1/2 pint, pint jar 20 oz, Reaper Infused Hot Honey 1/2 pint
-export const FEATURED_PRODUCT_ID = 4;
+// Pint jar only. Half-pint (id 2) and Reaper Infused Hot Honey (id 4) are not sold.
+export const HONEY_PRODUCT_IDS = [3];
+export const FEATURED_PRODUCT_ID = 3;
 
-// Products from https://www.hiveborn.com
-// Images now served locally from /public/images/ (copied from ~/Desktop/Hiveborn Images/)
+const SELLABLE_IDS = new Set([1, 3, 5]);
+
 export const PRODUCTS: Product[] = [
   {
-    id: 4,
-    name: "Reaper Infused Hot Honey 1/2 pint",
-    price: 1500,
-    description: "1/2 pint of spicy reaper-infused hot honey for a sweet kick.",
-    image: "/images/hot-honey.png",
-  },
-  {
-    id: 2,
-    name: "Hive Fresh Hand Harvested Honey 1/2 pint",
-    price: 1200,
-    description: "1/2 pint jar of fresh, hand-harvested honey from the hive.",
-    image: "/images/honey-medium.jpeg",
-  },
-  {
     id: 3,
-    name: "Hive Fresh Hand Harvested Honey — pint jar (20 oz by weight)",
+    name: "Hive Fresh Honey — pint jar (16 oz mason / 20 oz by weight) — $20",
     price: 2000,
-    description: "Pint jar containing 20 oz of honey by weight. Fresh, hand-harvested from the hive.",
+    description: "A 16 oz mason jar filled with 20 oz of honey by weight. Fresh, hand-harvested from the hive.",
     image: "/images/honey-large.jpeg",
   },
   {
@@ -50,6 +37,14 @@ export const PRODUCTS: Product[] = [
     image: "/images/honey-dipper.jpeg",
   },
 ];
+
+export function isSellableProductId(id: number): boolean {
+  return SELLABLE_IDS.has(id);
+}
+
+export function keepSellableCartItems<T extends { id: number }>(items: T[]): T[] {
+  return items.filter((item) => isSellableProductId(item.id));
+}
 
 export function productShipNote(id: number): string {
   return HONEY_PRODUCT_IDS.includes(id) ? COPY.honeyShipNote : COPY.otherShipNote;

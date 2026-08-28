@@ -1,27 +1,29 @@
 export const CONTACT_EMAIL = 'johnabiddle@gmail.com';
 export const PICKUP_ADDRESS = '93 Runaway Ln, New Market, VA 22844';
 
-/** Customer-facing pickup + shipping copy. Pickup is order-online Sat/Sun at the house, not walk-in. */
+/** Customer-facing pickup + shipping copy. Order online, then email to schedule pickup. */
 export const COPY = {
   metaTitle: 'Hiveborn — Raw honey from New Market, VA',
   metaDescription:
-    'Raw, unfiltered honey from New Market, Virginia. Order online for Saturday or Sunday pickup at the house. Honey ships in Virginia only.',
+    'Raw, unfiltered honey from New Market, Virginia. Order online at hiveborn.com. Pickup is available — email johnabiddle@gmail.com to schedule. Honey ships in Virginia only.',
   heroSub: 'Raw honey from New Market, Virginia.',
   heroPickup:
-    'Order online and pick up Saturday or Sunday at the house, or we ship honey inside Virginia.',
-  honeyShipNote: 'VA shipping, or Saturday or Sunday pickup at the house.',
-  otherShipNote: 'Ships continental US, or Saturday or Sunday pickup at the house.',
+    'Order online at hiveborn.com. Pickup is available — email johnabiddle@gmail.com to schedule. Honey ships in Virginia only.',
+  aboutFarm:
+    'We keep bees in New Market, Virginia, and harvest by hand. The honey is raw and unfiltered — the same jars we sell at the farm. Order online at hiveborn.com. Pickup is available at the house — email johnabiddle@gmail.com to schedule. When you pick up you can see the bees that made it. Honey orders ship inside Virginia only. Summer Lotion and Honey Dippers ship continental US.',
+  honeyShipNote: 'VA shipping, or pickup at the house after you order online.',
+  otherShipNote: 'Ships continental US, or pickup at the house after you order online.',
   cartDrawerNote:
-    'Saturday or Sunday pickup at the house is free. Virginia shipping starts at $11.',
-  pickupShippingBlurb: `Order online and pick up Saturday or Sunday at the house (${PICKUP_ADDRESS}) — free. We know you are coming because you ordered. Honey ships in Virginia only. Summer Lotion and Dipper ship continental US. Questions: ${CONTACT_EMAIL}.`,
-  footerPickup: 'New Market, VA · Saturday or Sunday pickup at the house ·',
+    'Pickup at the house is free. Email johnabiddle@gmail.com to schedule. Virginia shipping starts at $11.',
+  pickupShippingBlurb: `Order online at hiveborn.com. Pickup is available at ${PICKUP_ADDRESS} — email ${CONTACT_EMAIL} to schedule. When you pick up you can see the bees. Honey ships in Virginia only. Summer Lotion and Dipper ship continental US.`,
+  footerPickup: 'New Market, VA · Pickup available — email to schedule ·',
   footerHoney: 'Honey ships in Virginia only.',
-  cartPageNote: `Order online and pick up Saturday or Sunday at the house (${PICKUP_ADDRESS}) — free. Virginia shipping starts at $11. Honey ships in Virginia only.`,
-  checkoutIntro: `Order online and pick up Saturday or Sunday at the house (${PICKUP_ADDRESS}). Honey ships in Virginia; lotion and dippers ship continental US.`,
-  checkoutPickupLabel: 'Saturday or Sunday pickup at the house — free.',
-  checkoutPickupHint: `Pickup is at ${PICKUP_ADDRESS}. We know you are coming because you ordered. Questions: ${CONTACT_EMAIL}.`,
+  cartPageNote: `Order online at hiveborn.com. Pickup is available at ${PICKUP_ADDRESS} — email ${CONTACT_EMAIL} to schedule. Virginia shipping starts at $11. Honey ships in Virginia only.`,
+  checkoutIntro: `Order online at hiveborn.com. Pickup is available at ${PICKUP_ADDRESS} — email ${CONTACT_EMAIL} to schedule. Honey ships in Virginia; lotion and dippers ship continental US.`,
+  checkoutPickupLabel: 'Pickup at the house — free. Email to schedule after you order.',
+  checkoutPickupHint: `Pickup is at ${PICKUP_ADDRESS}. Email ${CONTACT_EMAIL} to schedule. When you pick up you can see the bees.`,
   checkoutUncheck: 'Uncheck only if you need shipping.',
-  checkoutPickupLine: 'Saturday or Sunday pickup at the house (free)',
+  checkoutPickupLine: 'Pickup at the house (free)',
   checkoutShippingHoney: 'Virginia shipping starts at $11',
   checkoutShippingOther: 'Shipping starts at $11',
   checkoutPickupTotal: 'Pickup total',
@@ -30,9 +32,10 @@ export const COPY = {
   honeyOutsideVa: 'Honey cannot ship outside Virginia. Choose pickup at the house or a VA address.',
   honeyOutsideVaAlert: 'Honey can only be shipped to Virginia. Choose pickup at the house or a VA address.',
   continentalOnly: 'We only ship lotion and dippers in the continental US.',
-  checkoutPickupFooter: `Saturday or Sunday pickup at the house — we know you are coming because you ordered. No shipping charged. You’ll pay on Stripe first.`,
+  checkoutPickupFooter: `Pickup at the house is free. Email ${CONTACT_EMAIL} to schedule after you order. You’ll pay on Stripe first.`,
+  checkoutAfterPay: 'After you pay, email to schedule pickup at the house. Questions:',
   checkoutShipFooter: 'Virginia shipping starts at $11. Honey products only to Virginia.',
-  successPickup: `Your order is marked for pickup at the house (${PICKUP_ADDRESS}) on Saturday or Sunday. We know you are coming because you ordered. Questions: ${CONTACT_EMAIL}.`,
-  successPickupBadge: '✓ Saturday or Sunday pickup at the house',
-  webhookPickup: `Pickup at the house (${PICKUP_ADDRESS}) on Saturday or Sunday. We know you are coming because you ordered. When you pick up you can see the bees that made it.`,
+  successPickup: `Your order is marked for pickup at the house (${PICKUP_ADDRESS}). Email ${CONTACT_EMAIL} to schedule. When you pick up you can see the bees.`,
+  successPickupBadge: '✓ Pickup at the house',
+  webhookPickup: `Pickup at the house (${PICKUP_ADDRESS}). Email ${CONTACT_EMAIL} to schedule. When you pick up you can see the bees that made it.`,
 };

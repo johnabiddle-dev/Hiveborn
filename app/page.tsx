@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { ShoppingCart, Plus, X } from 'lucide-react';
-import { PRODUCTS, Product, FEATURED_PRODUCT_ID, productShipNote } from '@/lib/products';
-import { CONTACT_EMAIL, COPY, PICKUP_ADDRESS } from '@/lib/copy';
+import { PRODUCTS, Product, FEATURED_PRODUCT_ID, keepSellableCartItems, productShipNote } from '@/lib/products';
+import { CONTACT_EMAIL, COPY } from '@/lib/copy';
 
 interface CartItem extends Product {
   quantity: number;
@@ -13,12 +13,14 @@ export default function HivebornShop() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  // Load cart from localStorage
+  // Load cart from localStorage (drop retired honey SKUs so they cannot stay in the cart)
   useEffect(() => {
     const savedCart = localStorage.getItem('hiveborn-cart');
     if (savedCart) {
+      const next = keepSellableCartItems(JSON.parse(savedCart) as CartItem[]);
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setCart(JSON.parse(savedCart));
+      setCart(next);
+      localStorage.setItem('hiveborn-cart', JSON.stringify(next));
     }
   }, []);
 
@@ -93,7 +95,7 @@ export default function HivebornShop() {
       <div className="max-w-2xl mx-auto px-6 py-10 sm:py-12 text-sm sm:text-base text-zinc-700 leading-relaxed">
         <h2 className="text-xl font-semibold tracking-tight text-black mb-3">About the farm</h2>
         <p>
-          We keep bees in New Market, Virginia, and harvest by hand. The honey is raw and unfiltered — the same jars we sell at the farm. Reaper Infused Hot Honey is our spicy jar. Order online and pick up Saturday or Sunday at the house at {PICKUP_ADDRESS} — we know you are coming because you ordered. When you pick up you can see the bees that made it. Honey orders ship inside Virginia only. Summer Lotion and Honey Dippers ship continental US. Questions:{' '}
+          {COPY.aboutFarm} Questions:{' '}
           <a href={`mailto:${CONTACT_EMAIL}`} className="underline">{CONTACT_EMAIL}</a>.
         </p>
       </div>
@@ -116,7 +118,7 @@ export default function HivebornShop() {
                 <div className="aspect-[4/3] bg-zinc-100 overflow-hidden relative">
                   {featured && (
                     <span className="absolute top-3 left-3 z-10 bg-amber-500 text-black text-[11px] font-semibold px-2.5 py-1 rounded-full">
-                      Our spicy jar
+                      Our honey
                     </span>
                   )}
                   <img

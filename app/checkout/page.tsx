@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { HONEY_PRODUCT_IDS } from '@/lib/products';
+import { HONEY_PRODUCT_IDS, keepSellableCartItems } from '@/lib/products';
 import { calculateShippingCents } from '@/lib/checkout';
 import { CONTACT_EMAIL, COPY } from '@/lib/copy';
 import { US_STATES } from '@/lib/us-states';
@@ -55,7 +55,8 @@ export default function Checkout() {
   useEffect(() => {
     const savedCart = localStorage.getItem('hiveborn-cart');
     if (savedCart) {
-      const parsed = JSON.parse(savedCart);
+      const parsed = keepSellableCartItems(JSON.parse(savedCart) as CartItem[]);
+      localStorage.setItem('hiveborn-cart', JSON.stringify(parsed));
       if (parsed.length === 0) {
         router.push('/');
       } else {
@@ -288,7 +289,7 @@ export default function Checkout() {
       </p>
       {isPickup && (
         <p className="text-xs text-center text-zinc-500 mt-2">
-          After you pay, pick up Saturday or Sunday at the house. Questions:{' '}
+          {COPY.checkoutAfterPay}{' '}
           <a href={`mailto:${CONTACT_EMAIL}`} className="underline">{CONTACT_EMAIL}</a>.
         </p>
       )}

@@ -6,6 +6,7 @@ export interface Product {
   price: number; // in cents for Stripe
   description: string;
   image: string; // URL or path
+  inStock: boolean;
 }
 
 export const HONEY_PRODUCT_IDS = [2, 3, 4]; // Honey 1/2 pint, pint jar 20 oz, Reaper Infused Hot Honey 1/2 pint
@@ -20,6 +21,7 @@ export const PRODUCTS: Product[] = [
     price: 1500,
     description: "1/2 pint of spicy reaper-infused hot honey for a sweet kick.",
     image: "/images/hot-honey.png",
+    inStock: false,
   },
   {
     id: 2,
@@ -27,13 +29,15 @@ export const PRODUCTS: Product[] = [
     price: 1200,
     description: "1/2 pint jar of fresh, hand-harvested honey from the hive.",
     image: "/images/honey-medium.jpeg",
+    inStock: false,
   },
   {
     id: 3,
-    name: "Hive Fresh Hand Harvested Honey — pint jar (20 oz by weight)",
+    name: "Hive Fresh Hand Harvested Honey — pint jar (16 oz mason, 20 oz by weight)",
     price: 2000,
-    description: "Pint jar containing 20 oz of honey by weight. Fresh, hand-harvested from the hive.",
+    description: "A 16 oz mason jar filled with 20 oz of honey by weight. Fresh, hand-harvested from the hive.",
     image: "/images/honey-large.jpeg",
+    inStock: true,
   },
   {
     id: 5,
@@ -41,6 +45,7 @@ export const PRODUCTS: Product[] = [
     price: 1400,
     description: "4 fl oz. Packaged in glass resealable jar. Ingredients: Organic jojoba oil, organic unrefined coconut oil, Wagyu beef tallow, organic and non-nano & uncoated zinc oxide, and Hiveborn beeswax.",
     image: "/images/summer-lotion.png",
+    inStock: true,
   },
   {
     id: 1,
@@ -48,8 +53,14 @@ export const PRODUCTS: Product[] = [
     price: 300,
     description: "Classic wooden honey dipper for drizzling.",
     image: "/images/honey-dipper.jpeg",
+    inStock: true,
   },
 ];
+
+export function isPurchasable(id: number): boolean {
+  const product = PRODUCTS.find((p) => p.id === id);
+  return product?.inStock === true;
+}
 
 export function productShipNote(id: number): string {
   return HONEY_PRODUCT_IDS.includes(id) ? COPY.honeyShipNote : COPY.otherShipNote;

@@ -43,6 +43,9 @@ export function resolveCartItems(items: unknown): ResolveResult {
     if (!product) {
       return { ok: false, error: `Unknown product in cart (id: ${String(i?.id)}).` };
     }
+    if (!product.inStock) {
+      return { ok: false, error: `${product.name} is out of stock.` };
+    }
     if (!Number.isInteger(quantity) || quantity < 1 || quantity > MAX_QUANTITY_PER_ITEM) {
       return { ok: false, error: `Invalid quantity for ${product.name}.` };
     }

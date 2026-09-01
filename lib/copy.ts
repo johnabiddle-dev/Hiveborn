@@ -37,4 +37,6 @@ export const COPY = {
   successPickupBadge: '✓ Pickup at the house (email to schedule)',
   webhookPickup: `Pickup at the house (${PICKUP_ADDRESS}). Email ${CONTACT_EMAIL} to schedule — hours vary; email first. When you pick up you can see the bees that made it.`,
   comingSoon: 'Coming soon',
+  giftSetNote:
+    'Hive Fresh honey is sold as a gift set: mason jar of honey, gift bag, and wooden dipper.',
 };

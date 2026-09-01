@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { COPY } from '@/lib/copy';
-import { isPurchasable } from '@/lib/products';
+import { isPurchasable, withCatalogFields } from '@/lib/products';
 
 interface CartItem {
   id: number;
@@ -20,7 +20,9 @@ export default function CartPage() {
   useEffect(() => {
     const saved = localStorage.getItem('hiveborn-cart');
     if (saved) {
-      const parsed = (JSON.parse(saved) as CartItem[]).filter((item) => isPurchasable(item.id));
+      const parsed = (JSON.parse(saved) as CartItem[])
+        .filter((item) => isPurchasable(item.id))
+        .map(withCatalogFields);
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setCart(parsed);
       localStorage.setItem('hiveborn-cart', JSON.stringify(parsed));
@@ -63,7 +65,8 @@ export default function CartPage() {
             <img src={item.image} alt="" className="w-24 h-24 object-cover rounded-2xl" />
             <div className="flex-1">
               <div className="font-semibold">{item.name}</div>
-              <div className="text-sm text-zinc-600">${(item.price / 100).toFixed(2)}</div>
+              <div className="text-xs text-zinc-500 mt-1">{item.description}</div>
+              <div className="text-sm text-zinc-600 mt-1">${(item.price / 100).toFixed(2)}</div>
               <div className="flex items-center gap-4 mt-3 text-sm">
                 <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="px-2 border rounded">-</button>
                 <span>{item.quantity}</span>
@@ -90,7 +93,8 @@ export default function CartPage() {
         Continue to Checkout
       </Link>
 
-      <p className="text-center text-xs text-zinc-500 mt-4">{COPY.cartPageNote}</p>
+      <p className="text-center text-xs text-zinc-500 mt-4">{COPY.giftSetNote}</p>
+      <p className="text-center text-xs text-zinc-500 mt-2">{COPY.cartPageNote}</p>
     </div>
   );
 }

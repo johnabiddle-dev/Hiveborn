@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { HONEY_PRODUCT_IDS, isPurchasable } from '@/lib/products';
+import { HONEY_PRODUCT_IDS, isPurchasable, withCatalogFields } from '@/lib/products';
 import { calculateShippingCents } from '@/lib/checkout';
 import { CONTACT_EMAIL, COPY } from '@/lib/copy';
 import { US_STATES } from '@/lib/us-states';
@@ -55,7 +55,9 @@ export default function Checkout() {
   useEffect(() => {
     const savedCart = localStorage.getItem('hiveborn-cart');
     if (savedCart) {
-      const parsed = (JSON.parse(savedCart) as CartItem[]).filter((item) => isPurchasable(item.id));
+      const parsed = (JSON.parse(savedCart) as CartItem[])
+        .filter((item) => isPurchasable(item.id))
+        .map(withCatalogFields);
       localStorage.setItem('hiveborn-cart', JSON.stringify(parsed));
       if (parsed.length === 0) {
         router.push('/');
@@ -140,7 +142,8 @@ export default function Checkout() {
   return (
     <div className="max-w-2xl mx-auto px-6 py-12">
       <h1 className="text-4xl font-semibold tracking-tighter mb-2">Checkout</h1>
-      <p className="text-sm text-zinc-600 mb-8">{COPY.checkoutIntro}</p>
+      <p className="text-sm text-zinc-600 mb-2">{COPY.checkoutIntro}</p>
+      <p className="text-sm text-zinc-600 mb-8">{COPY.giftSetNote}</p>
 
       {/* Order Summary */}
       <div className="mb-10 border rounded-3xl p-6">
@@ -148,7 +151,10 @@ export default function Checkout() {
         {cart.map(item => (
           <div key={item.id} className="flex justify-between py-2 border-b last:border-0 text-sm">
             <div>
-              {item.name} × {item.quantity}
+              <div>{item.name} × {item.quantity}</div>
+              {item.description && (
+                <div className="text-xs text-zinc-500 mt-0.5">{item.description}</div>
+              )}
             </div>
             <div>${((item.price * item.quantity) / 100).toFixed(2)}</div>
           </div>

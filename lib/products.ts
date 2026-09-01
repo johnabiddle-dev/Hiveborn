@@ -25,17 +25,19 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: 2,
-    name: "Hive Fresh Hand Harvested Honey 1/2 pint",
+    name: "Hive Fresh Honey Gift Set — 8 oz (half-pint)",
     price: 1200,
-    description: "1/2 pint jar of fresh, hand-harvested honey from the hive.",
+    description:
+      "Gift set: 8 oz (half-pint) mason jar of fresh, hand-harvested honey, packed in a gift bag with a wooden dipper.",
     image: "/images/honey-medium.jpeg",
-    inStock: false,
+    inStock: true,
   },
   {
     id: 3,
-    name: "Hive Fresh Hand Harvested Honey — pint jar (16 oz mason, 20 oz by weight)",
+    name: "Hive Fresh Honey Gift Set — pint jar (16 oz mason, 20 oz by weight)",
     price: 2000,
-    description: "A 16 oz mason jar filled with 20 oz of honey by weight. Fresh, hand-harvested from the hive.",
+    description:
+      "Gift set: a 16 oz mason jar filled with 20 oz of honey by weight, packed in a gift bag with a wooden dipper. Fresh, hand-harvested from the hive.",
     image: "/images/honey-large.jpeg",
     inStock: true,
   },
@@ -60,6 +62,19 @@ export const PRODUCTS: Product[] = [
 export function isPurchasable(id: number): boolean {
   const product = PRODUCTS.find((p) => p.id === id);
   return product?.inStock === true;
+}
+
+/** Overlay catalog name/price/description so cart copy cannot stay stale in localStorage. */
+export function withCatalogFields<T extends { id: number }>(item: T): T {
+  const product = PRODUCTS.find((p) => p.id === item.id);
+  if (!product) return item;
+  return {
+    ...item,
+    name: product.name,
+    price: product.price,
+    description: product.description,
+    image: product.image,
+  };
 }
 
 export function productShipNote(id: number): string {

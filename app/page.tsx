@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { ShoppingCart, Plus, X } from 'lucide-react';
-import { PRODUCTS, Product, FEATURED_PRODUCT_ID, isPurchasable, productShipNote } from '@/lib/products';
+import { PRODUCTS, Product, FEATURED_PRODUCT_ID, isPurchasable, productShipNote, withCatalogFields } from '@/lib/products';
 import { CONTACT_EMAIL, COPY, PICKUP_ADDRESS } from '@/lib/copy';
 
 interface CartItem extends Product {
@@ -19,7 +19,7 @@ export default function HivebornShop() {
     if (savedCart) {
       const parsed = JSON.parse(savedCart) as CartItem[];
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setCart(parsed.filter((item) => isPurchasable(item.id)));
+      setCart(parsed.filter((item) => isPurchasable(item.id)).map(withCatalogFields));
     }
   }, []);
 
@@ -95,7 +95,7 @@ export default function HivebornShop() {
       <div className="max-w-2xl mx-auto px-6 py-10 sm:py-12 text-sm sm:text-base text-zinc-700 leading-relaxed">
         <h2 className="text-xl font-semibold tracking-tight text-black mb-3">About the farm</h2>
         <p>
-          We keep bees in New Market, Virginia, and harvest by hand. The honey is raw and unfiltered — the same jars we sell at the farm. Reaper Infused Hot Honey is our spicy jar. Order online, then email {CONTACT_EMAIL} to schedule pickup at the house at {PICKUP_ADDRESS}. Hours vary; email first. When you pick up you can see the bees that made it. Honey orders ship inside Virginia only. Summer Lotion and Honey Dippers ship continental US. Questions:{' '}
+          We keep bees in New Market, Virginia, and harvest by hand. The honey is raw and unfiltered. Hive Fresh honey is sold as a gift set: mason jar of honey, gift bag, and wooden dipper. Reaper Infused Hot Honey is our spicy jar. Order online, then email {CONTACT_EMAIL} to schedule pickup at the house at {PICKUP_ADDRESS}. Hours vary; email first. When you pick up you can see the bees that made it. Honey orders ship inside Virginia only. Summer Lotion and Honey Dippers ship continental US. Questions:{' '}
           <a href={`mailto:${CONTACT_EMAIL}`} className="underline">{CONTACT_EMAIL}</a>.
         </p>
       </div>
@@ -104,7 +104,7 @@ export default function HivebornShop() {
       <div id="products" className="max-w-6xl mx-auto px-6 pb-16">
         <h2 className="text-4xl font-semibold tracking-tighter mb-2 text-center">Our Products</h2>
         <p className="text-center text-zinc-600 mb-12 max-w-md mx-auto">
-          Carefully crafted from the hive.
+          Carefully crafted from the hive. {COPY.giftSetNote}
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -193,6 +193,7 @@ export default function HivebornShop() {
                       <img src={item.image} alt="" className="w-20 h-20 object-cover rounded-xl" />
                       <div className="flex-1 min-w-0">
                         <div className="font-medium">{item.name}</div>
+                        <div className="text-xs text-zinc-500 mt-0.5">{item.description}</div>
                         <div className="text-sm text-zinc-600">${(item.price / 100).toFixed(2)} each</div>
 
                         <div className="flex items-center gap-3 mt-2">

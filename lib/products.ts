@@ -25,17 +25,17 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: 2,
-    name: "Hive Fresh Honey Gift Set — 8 oz (half-pint)",
-    price: 1200,
+    name: "Hive Fresh Honey Gift Set — half-pint jar (8 oz mason, 10 oz by weight)",
+    price: 1500,
     description:
-      "Gift set: 8 oz (half-pint) mason jar of fresh, hand-harvested honey, packed in a gift bag with a wooden dipper.",
+      "Gift set: an 8 oz mason jar filled with 10 oz of honey by weight, packed in a gift bag with a wooden dipper. Fresh, hand-harvested from the hive.",
     image: "/images/honey-medium.jpeg",
     inStock: true,
   },
   {
     id: 3,
     name: "Hive Fresh Honey Gift Set — pint jar (16 oz mason, 20 oz by weight)",
-    price: 2000,
+    price: 2500,
     description:
       "Gift set: a 16 oz mason jar filled with 20 oz of honey by weight, packed in a gift bag with a wooden dipper. Fresh, hand-harvested from the hive.",
     image: "/images/honey-large.jpeg",

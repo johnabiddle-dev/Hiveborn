@@ -127,7 +127,7 @@ export default function HivebornShop() {
                     </span>
                   )}
                   <img
-                    src={product.image}
+                    src={product.cardImage ?? product.image}
                     alt={product.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
@@ -190,7 +190,7 @@ export default function HivebornShop() {
                 <div className="flex-1 overflow-auto p-6 space-y-6">
                   {cart.map((item) => (
                     <div key={item.id} className="flex gap-4">
-                      <img src={item.image} alt="" className="w-20 h-20 object-cover rounded-xl" />
+                      <img src={item.cardImage ?? item.image} alt="" className="w-20 h-20 object-cover rounded-xl" />
                       <div className="flex-1 min-w-0">
                         <div className="font-medium">{item.name}</div>
                         <div className="text-xs text-zinc-500 mt-0.5">{item.description}</div>

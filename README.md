@@ -1,6 +1,6 @@
 # Hiveborn Store
 
-Next.js + Stripe + Resend store for honey, hot honey, lotion, and dipper products.
+Next.js + Stripe + Resend store for honey gift sets, kitchen mason-jar add-ons (supplier dropship), lotion, and dipper products.
 
 The site is live on the custom domain at **hiveborn.com** (www.hiveborn.com).
 
@@ -69,7 +69,9 @@ For local webhooks you'd need the Stripe CLI or a tunnel (ngrok), but for normal
 - `app/api/webhook/route.ts` — handles `checkout.session.completed`, sends Resend email (bonus)
 - `app/checkout/page.tsx` — shipping/pickup form + policy text
 - `app/success/success-content.tsx` — verifies the payment server-side and clears the cart
-- `lib/products.ts` — product data + local images from /public/images
+- `lib/products.ts` — product catalog (honey / house / accessory dropship)
+- `lib/fulfillment.ts` — split fulfillment: honey pickup vs accessory dropship
+- `app/product/[slug]/page.tsx` — product pages (mouth-size + ship-time disclosure on add-ons)
 
 ## Environment variables (local)
 

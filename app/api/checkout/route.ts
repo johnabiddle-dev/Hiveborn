@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { calculateShippingCents, resolveCartItems, toStripeLineItems } from '@/lib/checkout';
+import {
+  formatAddress,
+  serializeFulfillmentMetadata,
+  shippingLineDescription,
+  validateShipDestination,
+} from '@/lib/fulfillment';
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,34 +22,33 @@ export async function POST(request: NextRequest) {
     if (!resolved.ok) {
       return NextResponse.json({ error: resolved.error }, { status: 400 });
     }
-    const { resolvedItems, hasHoneyItems } = resolved;
+    const { resolvedItems } = resolved;
+    const plan = resolved.plan(Boolean(isPickup));
 
-    // Validate honey shipping restriction (honey only to VA) — skipped for pickup
     const state = (shippingAddress?.state || '').toUpperCase().trim();
-    if (!isPickup) {
-      if (hasHoneyItems && state !== 'VA' && !state.includes('VIRGINIA')) {
-        return NextResponse.json({ error: 'All honey products can only be shipped to Virginia addresses.' }, { status: 400 });
-      }
-      if (!hasHoneyItems && (state === 'AK' || state === 'HI' || state.includes('ALASKA') || state.includes('HAWAII'))) {
-        return NextResponse.json({ error: 'We only ship to the continental United States for non-honey items (Summer Lotion and Dipper).' }, { status: 400 });
-      }
+    const destination = validateShipDestination(plan, state);
+    if (!destination.ok) {
+      return NextResponse.json({ error: destination.error }, { status: 400 });
     }
 
     // Calculate shipping (server authoritative). The client-provided shipping cost
     // is intentionally ignored so it cannot be reduced to zero via tampering.
-    const shippingCost = isPickup ? 0 : calculateShippingCents(resolvedItems.length);
+    // Pickup honey/house items do not count; dropship accessories always do.
+    const shippingCost = calculateShippingCents(plan.shippingLineCount);
 
     // Convert resolved (server-priced) cart items to Stripe line items
     const lineItems = toStripeLineItems(resolvedItems);
 
-    // Add shipping as a line item only for delivery (not pickup)
-    if (!isPickup) {
+    // Add shipping as a line item only when something actually ships
+    if (plan.shippingLineCount > 0) {
       lineItems.push({
         price_data: {
           currency: 'usd',
           product_data: {
-            name: 'Shipping',
-            description: hasHoneyItems ? 'Honey products - ships to Virginia only' : 'Standard shipping to continental US (Summer Lotion & Dipper)',
+            name: plan.isSplitFulfillment
+              ? 'Kitchen add-on shipping (supplier dropship)'
+              : 'Shipping',
+            description: shippingLineDescription(plan),
           },
           unit_amount: shippingCost,
         },
@@ -66,8 +71,8 @@ export async function POST(request: NextRequest) {
       metadata: {
         shippingName: shippingAddress?.name || '',
         shippingAddress: JSON.stringify(shippingAddress || {}),
-        hasHoneyItems: hasHoneyItems.toString(),
-        isPickup: isPickup.toString(),
+        shipTo: formatAddress(shippingAddress),
+        ...serializeFulfillmentMetadata(plan),
       },
     });
 

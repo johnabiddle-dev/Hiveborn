@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-labelledby="title desc">
+  <title id="title">Wide-Mouth Mason Jar Pump Lids (2-Pack)  Kitchen Add-On</title>
+  <desc id="desc">Placeholder product card for wide-mouth mason jar pump lids, 2-pack. Not Hiveborn honey.</desc>
+  <rect width="800" height="600" fill="#fffbeb"/>
+  <rect x="24" y="24" width="752" height="552" rx="36" fill="#ffffff" stroke="#f59e0b" stroke-width="3"/>
+  <rect x="48" y="48" width="200" height="40" rx="20" fill="#111827"/>
+  <text x="148" y="75" text-anchor="middle" font-family="Georgia, serif" font-size="16" font-weight="700" fill="#fbbf24">WIDE-MOUTH</text>
+  <text x="400" y="130" text-anchor="middle" font-family="Georgia, serif" font-size="34" font-weight="700" fill="#111827">Pump Lids · 2-Pack</text>
+  <text x="400" y="168" text-anchor="middle" font-family="system-ui, sans-serif" font-size="16" fill="#52525b">Kitchen add-on · fits ~86 mm wide-mouth jars</text>
+
+  <g transform="translate(175 250)">
+    <ellipse cx="0" cy="70" rx="92" ry="22" fill="#e4e4e7"/>
+    <circle cx="0" cy="48" r="88" fill="#d4d4d8" stroke="#71717a" stroke-width="6"/>
+    <circle cx="0" cy="48" r="62" fill="#f4f4f5"/>
+    <rect x="-10" y="-70" width="20" height="90" rx="8" fill="#3f3f46"/>
+    <rect x="-22" y="-92" width="44" height="28" rx="10" fill="#27272a"/>
+  </g>
+  <g transform="translate(625 250)">
+    <ellipse cx="0" cy="70" rx="92" ry="22" fill="#e4e4e7"/>
+    <circle cx="0" cy="48" r="88" fill="#d4d4d8" stroke="#71717a" stroke-width="6"/>
+    <circle cx="0" cy="48" r="62" fill="#f4f4f5"/>
+    <rect x="-10" y="-70" width="20" height="90" rx="8" fill="#3f3f46"/>
+    <rect x="-22" y="-92" width="44" height="28" rx="10" fill="#27272a"/>
+  </g>
+
+  <text x="400" y="470" text-anchor="middle" font-family="system-ui, sans-serif" font-size="18" fill="#3f3f46">Not Hiveborn honey · supplier dropships</text>
+  <text x="400" y="500" text-anchor="middle" font-family="system-ui, sans-serif" font-size="15" fill="#71717a">Does not fit regular-mouth jars</text>
+  <text x="400" y="540" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" fill="#a1a1aa">Placeholder graphic until product photos arrive</text>
+</svg>

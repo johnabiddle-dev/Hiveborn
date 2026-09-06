@@ -1,13 +1,96 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { ShoppingCart, Plus, X } from 'lucide-react';
-import { PRODUCTS, Product, FEATURED_PRODUCT_ID, isPurchasable, productShipNote, withCatalogFields } from '@/lib/products';
+import {
+  ACCESSORY_PRODUCTS,
+  FEATURED_PRODUCT_ID,
+  HONEY_PRODUCTS,
+  HOUSE_PRODUCTS,
+  Product,
+  isPurchasable,
+  productPath,
+  productShipNote,
+  withCatalogFields,
+} from '@/lib/products';
 import { CONTACT_EMAIL, COPY, PICKUP_ADDRESS, PICKUP_MAPS_NOTE } from '@/lib/copy';
+import { lineFulfillmentLabel, planFulfillment } from '@/lib/fulfillment';
 import { withPickupMapsLink } from '@/lib/pickup-maps-link';
 
 interface CartItem extends Product {
   quantity: number;
+}
+
+function ProductCard({
+  product,
+  featured,
+  onAdd,
+}: {
+  product: Product;
+  featured?: boolean;
+  onAdd: (product: Product) => void;
+}) {
+  const accessory = product.kind === 'accessory';
+  return (
+    <div
+      className={`group rounded-3xl overflow-hidden bg-white flex flex-col ${featured ? 'border-2 border-amber-500 md:col-span-2 lg:col-span-2' : 'border'}`}
+    >
+      <Link href={productPath(product)} className="aspect-[4/3] bg-zinc-100 overflow-hidden relative block">
+        {featured && (
+          <span className="absolute top-3 left-3 z-10 bg-amber-500 text-black text-[11px] font-semibold px-2.5 py-1 rounded-full">
+            Our spicy jar
+          </span>
+        )}
+        {accessory && (
+          <span className="absolute top-3 left-3 z-10 bg-zinc-800 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full">
+            {COPY.kitchenBadge}
+          </span>
+        )}
+        {!product.inStock && (
+          <span className={`absolute top-3 z-10 bg-zinc-800 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full ${featured || accessory ? 'right-3' : 'left-3'}`}>
+            {COPY.comingSoon}
+          </span>
+        )}
+        <img
+          src={product.cardImage ?? product.image}
+          alt={product.name}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+        />
+      </Link>
+      <div className="p-6 flex-1 flex flex-col">
+        <div>
+          <h3 className="font-semibold text-xl tracking-tight">
+            <Link href={productPath(product)} className="hover:underline">
+              {product.name}
+            </Link>
+          </h3>
+          <p className="text-2xl font-medium mt-1 tracking-tighter">
+            ${(product.price / 100).toFixed(2)}
+          </p>
+          <p className="text-sm text-zinc-600 mt-3 leading-relaxed">{product.description}</p>
+          <p className="text-xs text-zinc-500 mt-3">{productShipNote(product.id)}</p>
+        </div>
+        {product.inStock ? (
+          <button
+            onClick={() => onAdd(product)}
+            className="mt-auto w-full bg-black text-white py-3 rounded-2xl font-medium flex items-center justify-center gap-2 hover:bg-zinc-800 active:scale-[0.985] transition-all mt-6"
+          >
+            <Plus size={16} /> Add to Cart
+          </button>
+        ) : (
+          <button
+            type="button"
+            disabled
+            aria-disabled="true"
+            className="mt-auto w-full bg-zinc-200 text-zinc-600 py-3 rounded-2xl font-medium mt-6 cursor-not-allowed"
+          >
+            {COPY.comingSoon}
+          </button>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default function HivebornShop() {
@@ -63,6 +146,7 @@ export default function HivebornShop() {
   );
 
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const cartPlan = planFulfillment(cart, true);
 
   return (
     <div className="min-h-screen bg-white">
@@ -96,7 +180,7 @@ export default function HivebornShop() {
       <div className="max-w-2xl mx-auto px-6 py-10 sm:py-12 text-sm sm:text-base text-zinc-700 leading-relaxed">
         <h2 className="text-xl font-semibold tracking-tight text-black mb-3">About the farm</h2>
         <p>
-          We keep bees in New Market, Virginia, and harvest by hand. The honey is raw and unfiltered. Hive Fresh honey is sold as a gift set: mason jar of honey, gift bag, and wooden dipper. Reaper Infused Hot Honey is our spicy jar. Order online, then email {CONTACT_EMAIL} to schedule pickup at the house at {PICKUP_ADDRESS}. Hours vary; email first. When you pick up you can see the bees that made it. {withPickupMapsLink(PICKUP_MAPS_NOTE)} Honey orders ship inside Virginia only. Summer Lotion and Honey Dippers ship continental US. Questions:{' '}
+          We keep bees in New Market, Virginia, and harvest by hand. The honey is raw and unfiltered. Hive Fresh honey is sold as a gift set: mason jar of honey, gift bag, and wooden dipper. Reaper Infused Hot Honey is our spicy jar. Order online, then email {CONTACT_EMAIL} to schedule pickup at the house at {PICKUP_ADDRESS}. Hours vary; email first. When you pick up you can see the bees that made it. {withPickupMapsLink(PICKUP_MAPS_NOTE)} Honey orders ship inside Virginia only. Summer Lotion and Honey Dippers ship continental US. Kitchen mason-jar add-ons (wide-mouth pump lids and regular-mouth dipper lids) are not Hiveborn honey — a supplier dropships them to your address. Questions:{' '}
           <a href={`mailto:${CONTACT_EMAIL}`} className="underline">{CONTACT_EMAIL}</a>.
         </p>
       </div>
@@ -109,60 +193,35 @@ export default function HivebornShop() {
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {PRODUCTS.map((product) => {
-            const featured = product.id === FEATURED_PRODUCT_ID;
-            return (
-              <div
-                key={product.id}
-                className={`group rounded-3xl overflow-hidden bg-white flex flex-col ${featured ? 'border-2 border-amber-500 md:col-span-2 lg:col-span-2' : 'border'}`}
-              >
-                <div className="aspect-[4/3] bg-zinc-100 overflow-hidden relative">
-                  {featured && (
-                    <span className="absolute top-3 left-3 z-10 bg-amber-500 text-black text-[11px] font-semibold px-2.5 py-1 rounded-full">
-                      Our spicy jar
-                    </span>
-                  )}
-                  {!product.inStock && (
-                    <span className={`absolute top-3 z-10 bg-zinc-800 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full ${featured ? 'right-3' : 'left-3'}`}>
-                      {COPY.comingSoon}
-                    </span>
-                  )}
-                  <img
-                    src={product.cardImage ?? product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <div className="p-6 flex-1 flex flex-col">
-                  <div>
-                    <h3 className="font-semibold text-xl tracking-tight">{product.name}</h3>
-                    <p className="text-2xl font-medium mt-1 tracking-tighter">
-                      ${(product.price / 100).toFixed(2)}
-                    </p>
-                    <p className="text-sm text-zinc-600 mt-3 leading-relaxed">{product.description}</p>
-                    <p className="text-xs text-zinc-500 mt-3">{productShipNote(product.id)}</p>
-                  </div>
-                  {product.inStock ? (
-                    <button
-                      onClick={() => addToCart(product)}
-                      className="mt-auto w-full bg-black text-white py-3 rounded-2xl font-medium flex items-center justify-center gap-2 hover:bg-zinc-800 active:scale-[0.985] transition-all mt-6"
-                    >
-                      <Plus size={16} /> Add to Cart
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      disabled
-                      aria-disabled="true"
-                      className="mt-auto w-full bg-zinc-200 text-zinc-600 py-3 rounded-2xl font-medium mt-6 cursor-not-allowed"
-                    >
-                      {COPY.comingSoon}
-                    </button>
-                  )}
-                </div>
-              </div>
-            );
-          })}
+          {HONEY_PRODUCTS.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              featured={product.id === FEATURED_PRODUCT_ID}
+              onAdd={addToCart}
+            />
+          ))}
+        </div>
+
+        <div id="kitchen-add-ons" className="mt-16 pt-4">
+          <h3 className="text-3xl font-semibold tracking-tighter mb-2 text-center">{COPY.kitchenAddOnsHeading}</h3>
+          <p className="text-center text-zinc-600 mb-10 max-w-xl mx-auto">
+            {COPY.kitchenAddOnsIntro}
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {ACCESSORY_PRODUCTS.map((product) => (
+              <ProductCard key={product.id} product={product} onAdd={addToCart} />
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-16">
+          <h3 className="text-3xl font-semibold tracking-tighter mb-8 text-center">From the hive</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {HOUSE_PRODUCTS.map((product) => (
+              <ProductCard key={product.id} product={product} onAdd={addToCart} />
+            ))}
+          </div>
         </div>
       </div>
 
@@ -189,12 +248,18 @@ export default function HivebornShop() {
             ) : (
               <>
                 <div className="flex-1 overflow-auto p-6 space-y-6">
+                  {cartPlan.isSplitFulfillment && (
+                    <p className="text-xs text-amber-900 bg-amber-50 border border-amber-200 rounded-2xl p-3">
+                      {COPY.cartSplitNote}
+                    </p>
+                  )}
                   {cart.map((item) => (
                     <div key={item.id} className="flex gap-4">
                       <img src={item.cardImage ?? item.image} alt="" className="w-20 h-20 object-cover rounded-xl" />
                       <div className="flex-1 min-w-0">
                         <div className="font-medium">{item.name}</div>
                         <div className="text-xs text-zinc-500 mt-0.5">{item.description}</div>
+                        <div className="text-xs text-amber-800 mt-0.5">{lineFulfillmentLabel(item.id, cartPlan)}</div>
                         <div className="text-sm text-zinc-600">${(item.price / 100).toFixed(2)} each</div>
 
                         <div className="flex items-center gap-3 mt-2">
@@ -216,13 +281,13 @@ export default function HivebornShop() {
                     <div>Total</div>
                     <div>${cartTotal.toFixed(2)}</div>
                   </div>
-                  <a
+                  <Link
                     href="/checkout"
                     onClick={() => setIsCartOpen(false)}
                     className="block w-full bg-black text-white text-center py-3.5 rounded-2xl font-medium active:bg-zinc-800"
                   >
                     Proceed to Checkout
-                  </a>
+                  </Link>
                   <p className="text-[10px] text-center text-zinc-500 mt-3">{COPY.cartDrawerNote}</p>
                 </div>
               </>

@@ -3,13 +3,18 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { COPY } from '@/lib/copy';
+import type { FulfillmentPlan } from '@/lib/fulfillment';
+import { successFulfillmentBadge, successFulfillmentMessage } from '@/lib/fulfillment';
 import { withPickupCopyLinks } from '@/lib/pickup-maps-link';
 
 interface VerifiedOrder {
   verified: boolean;
   amountTotal?: number;
   isPickup?: boolean;
+  isSplitFulfillment?: boolean;
+  hasAccessoryItems?: boolean;
+  accessoriesShip?: boolean;
+  plan?: FulfillmentPlan;
   customerName?: string | null;
   shippingAddress?: { address?: string; city?: string; state?: string; zip?: string } | null;
   items?: Array<{ name: string; amount: number; quantity: number }>;
@@ -45,9 +50,35 @@ export default function SuccessContent() {
           setStatus('success');
           setOrder(data);
 
-          const pickupText = data.isPickup
-            ? COPY.successPickup
-            : 'Your order will be shipped to the address you provided.';
+          const pickupText = data.plan
+            ? successFulfillmentMessage(data.plan)
+            : data.isSplitFulfillment
+              ? successFulfillmentMessage({
+                  hasHoneyItems: true,
+                  hasHouseItems: false,
+                  hasAccessoryItems: true,
+                  pickupEligible: true,
+                  honeyHousePickup: true,
+                  honeyShips: false,
+                  houseShips: false,
+                  accessoriesShip: true,
+                  isSplitFulfillment: true,
+                  shippingLineCount: 1,
+                })
+              : data.isPickup
+                ? successFulfillmentMessage({
+                    hasHoneyItems: true,
+                    hasHouseItems: false,
+                    hasAccessoryItems: false,
+                    pickupEligible: true,
+                    honeyHousePickup: true,
+                    honeyShips: false,
+                    houseShips: false,
+                    accessoriesShip: false,
+                    isSplitFulfillment: false,
+                    shippingLineCount: 0,
+                  })
+                : 'Your order will be shipped to the address you provided.';
 
           setMessage(`Thank you! Payment confirmed. ${pickupText}`);
 
@@ -85,14 +116,24 @@ export default function SuccessContent() {
                   Total paid: ${(order.amountTotal / 100).toFixed(2)}
                 </div>
               )}
-              {order.isPickup !== undefined && (
+              {order.plan && (
                 <div className="mb-1 font-medium">
-                  {order.isPickup ? COPY.successPickupBadge : '✓ Shipping'}
+                  {successFulfillmentBadge(order.plan)}
+                </div>
+              )}
+              {!order.plan && order.isPickup !== undefined && (
+                <div className="mb-1 font-medium">
+                  {order.isPickup ? '✓ Pickup at the house (email or text to schedule)' : '✓ Shipping'}
                 </div>
               )}
               {order.shippingAddress?.address && (
                 <div className="mt-2 text-xs">
-                  {order.isPickup ? 'Contact details on file' : 'Shipping to:'}<br />
+                  {order.plan?.isSplitFulfillment
+                    ? 'Kitchen add-ons ship to:'
+                    : order.plan?.honeyHousePickup
+                      ? 'Contact details on file'
+                      : 'Shipping to:'}
+                  <br />
                   {order.shippingAddress.address}<br />
                   {order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.zip}
                 </div>

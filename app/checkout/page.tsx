@@ -2,9 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { HONEY_PRODUCT_IDS, isPurchasable, withCatalogFields } from '@/lib/products';
 import { calculateShippingCents } from '@/lib/checkout';
 import { CONTACT_EMAIL, COPY } from '@/lib/copy';
+import {
+  checkoutShippingLabel,
+  lineFulfillmentLabel,
+  planFulfillment,
+  validateShipDestination,
+} from '@/lib/fulfillment';
+import { isPurchasable, withCatalogFields } from '@/lib/products';
 import { withPickupCopyLinks, withPickupMapsLink } from '@/lib/pickup-maps-link';
 import { US_STATES } from '@/lib/us-states';
 
@@ -14,16 +20,6 @@ interface CartItem {
   price: number;
   description: string;
   quantity: number;
-}
-
-function isVirginia(state: string) {
-  const a = state.toUpperCase().trim();
-  return a === 'VA' || a.includes('VIRGINIA');
-}
-
-function isNonContinental(state: string) {
-  const a = state.toUpperCase().trim();
-  return a === 'AK' || a === 'HI' || a.includes('ALASKA') || a.includes('HAWAII');
 }
 
 export default function Checkout() {
@@ -43,15 +39,16 @@ export default function Checkout() {
 
   const router = useRouter();
 
-  const hasHoneyItems = cart.some(item => HONEY_PRODUCT_IDS.includes(item.id));
-  const shippingCostCents = isPickup ? 0 : calculateShippingCents(cart.length);
+  const plan = planFulfillment(cart, isPickup);
+  const shippingCostCents = calculateShippingCents(plan.shippingLineCount);
   const productsTotalCents = cart.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
   const grandTotalCents = productsTotalCents + shippingCostCents;
-  const honeyBlocked = !isPickup && hasHoneyItems && !isVirginia(shipping.state);
-  const continentalBlocked = !isPickup && !hasHoneyItems && isNonContinental(shipping.state);
+  const destination = validateShipDestination(plan, shipping.state);
+  const honeyBlocked = !destination.ok && destination.reason === 'honey_outside_va';
+  const continentalBlocked = !destination.ok && destination.reason === 'non_continental';
 
   useEffect(() => {
     const savedCart = localStorage.getItem('hiveborn-cart');
@@ -65,6 +62,10 @@ export default function Checkout() {
       } else {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setCart(parsed);
+        const nextPlan = planFulfillment(parsed, true);
+        if (!nextPlan.pickupEligible) {
+          setIsPickup(false);
+        }
       }
     } else {
       router.push('/');
@@ -86,19 +87,15 @@ export default function Checkout() {
       return;
     }
     if (!shipping.address || !shipping.city || !shipping.state || !shipping.zip) {
-      alert('Please fill out all contact / shipping fields.');
+      alert(plan.hasAccessoryItems
+        ? 'Kitchen add-ons need a ship-to address. The supplier dropships to you.'
+        : 'Please fill out all contact / shipping fields.');
       return;
     }
 
-    if (!isPickup) {
-      if (hasHoneyItems && !isVirginia(shipping.state)) {
-        alert(COPY.honeyOutsideVaAlert);
-        return;
-      }
-      if (!hasHoneyItems && isNonContinental(shipping.state)) {
-        alert(COPY.continentalOnly);
-        return;
-      }
+    if (!destination.ok) {
+      alert(destination.reason === 'honey_outside_va' ? COPY.honeyOutsideVaAlert : COPY.continentalOnly);
+      return;
     }
 
     setIsLoading(true);
@@ -111,7 +108,7 @@ export default function Checkout() {
           items: cart,
           shippingAddress: shipping,
           shippingCost: shippingCostCents,
-          isPickup,
+          isPickup: plan.honeyHousePickup,
           email: shipping.email,
           phone: shipping.phone,
         }),
@@ -120,7 +117,7 @@ export default function Checkout() {
       const data = await res.json();
 
       if (data.url) {
-        window.location.href = data.url;
+        window.location.assign(data.url);
       } else {
         alert(data.error || 'Something went wrong with checkout.');
         setIsLoading(false);
@@ -136,15 +133,32 @@ export default function Checkout() {
     return <div className="p-12 text-center">Loading cart...</div>;
   }
 
-  const payLabel = isPickup
+  const payLabel = plan.shippingLineCount === 0
     ? `Pay $${(grandTotalCents / 100).toFixed(2)} — apiary pickup`
     : `Pay $${(grandTotalCents / 100).toFixed(2)} with Stripe`;
+
+  const addressHeading = plan.isSplitFulfillment
+    ? COPY.checkoutAddressSplit
+    : plan.shippingLineCount > 0
+      ? COPY.checkoutAddressShip
+      : COPY.checkoutAddressHoney;
 
   return (
     <div className="max-w-2xl mx-auto px-6 py-12">
       <h1 className="text-4xl font-semibold tracking-tighter mb-2">Checkout</h1>
       <p className="text-sm text-zinc-600 mb-2">{COPY.checkoutIntro}</p>
       <p className="text-sm text-zinc-600 mb-8">{COPY.giftSetNote}</p>
+
+      {plan.isSplitFulfillment && (
+        <div className="mb-8 rounded-3xl border-2 border-amber-500 bg-amber-50 p-4 text-sm text-zinc-800">
+          {COPY.checkoutSplitBanner}
+        </div>
+      )}
+      {!plan.pickupEligible && plan.hasAccessoryItems && (
+        <div className="mb-8 rounded-3xl border border-zinc-300 bg-zinc-50 p-4 text-sm text-zinc-700">
+          {COPY.checkoutAccessoryOnlyNote}
+        </div>
+      )}
 
       {/* Order Summary */}
       <div className="mb-10 border rounded-3xl p-6">
@@ -156,6 +170,7 @@ export default function Checkout() {
               {item.description && (
                 <div className="text-xs text-zinc-500 mt-0.5">{item.description}</div>
               )}
+              <div className="text-xs text-amber-800 mt-0.5">{lineFulfillmentLabel(item.id, plan)}</div>
             </div>
             <div>${((item.price * item.quantity) / 100).toFixed(2)}</div>
           </div>
@@ -165,38 +180,36 @@ export default function Checkout() {
           <div>${(productsTotalCents / 100).toFixed(2)}</div>
         </div>
         <div className="flex justify-between text-sm">
-          <div>
-            {isPickup
-              ? COPY.checkoutPickupLine
-              : hasHoneyItems
-                ? COPY.checkoutShippingHoney
-                : COPY.checkoutShippingOther}
-          </div>
+          <div>{checkoutShippingLabel(plan)}</div>
           <div>${(shippingCostCents / 100).toFixed(2)}</div>
         </div>
         <div className="flex justify-between font-semibold text-lg pt-4 border-t">
-          <div>{isPickup ? COPY.checkoutPickupTotal : 'Total'}</div>
+          <div>{plan.shippingLineCount === 0 ? COPY.checkoutPickupTotal : 'Total'}</div>
           <div>${(grandTotalCents / 100).toFixed(2)}</div>
         </div>
       </div>
 
       {/* Shipping Address / Pickup Details */}
       <div className="mb-10">
-        <h2 className="font-semibold mb-4 text-xl tracking-tight">{isPickup ? 'Pickup / Contact Information' : 'Shipping Address'}</h2>
-        <label className="flex items-start gap-3 text-sm mb-4 cursor-pointer select-none rounded-2xl border-2 border-amber-500 bg-amber-50 p-4">
-          <input
-            type="checkbox"
-            checked={isPickup}
-            onChange={(e) => setIsPickup(e.target.checked)}
-            className="w-5 h-5 mt-0.5 accent-black shrink-0"
-          />
-          <span>
-            <span className="font-semibold text-black">{COPY.checkoutPickupLabel}</span>
-            <span className="block text-zinc-600 mt-0.5">{withPickupMapsLink(COPY.checkoutPickupHint)}</span>
-            <span className="block text-zinc-600 mt-0.5">{COPY.checkoutUncheck}</span>
-          </span>
-        </label>
-        {!isPickup && (
+        <h2 className="font-semibold mb-4 text-xl tracking-tight">{addressHeading}</h2>
+        {plan.pickupEligible && (
+          <label className="flex items-start gap-3 text-sm mb-4 cursor-pointer select-none rounded-2xl border-2 border-amber-500 bg-amber-50 p-4">
+            <input
+              type="checkbox"
+              checked={isPickup}
+              onChange={(e) => setIsPickup(e.target.checked)}
+              className="w-5 h-5 mt-0.5 accent-black shrink-0"
+            />
+            <span>
+              <span className="font-semibold text-black">{COPY.checkoutPickupLabel}</span>
+              <span className="block text-zinc-600 mt-0.5">{withPickupMapsLink(COPY.checkoutPickupHint)}</span>
+              <span className="block text-zinc-600 mt-0.5">
+                {plan.hasAccessoryItems ? COPY.checkoutPickupWithAccessories : COPY.checkoutUncheck}
+              </span>
+            </span>
+          </label>
+        )}
+        {plan.shippingLineCount > 0 && (
           <p className="text-sm text-zinc-600 mb-4">{COPY.checkoutShippingNote}</p>
         )}
         {honeyBlocked && (
@@ -243,7 +256,7 @@ export default function Checkout() {
           <input
             type="text"
             name="address"
-            placeholder="Street Address"
+            placeholder={plan.hasAccessoryItems ? 'Ship-to street address' : 'Street Address'}
             value={shipping.address}
             onChange={handleInputChange}
             className="border p-3 rounded-2xl"
@@ -296,9 +309,13 @@ export default function Checkout() {
       </button>
 
       <p className="text-xs text-center text-zinc-500 mt-4">
-        {isPickup ? COPY.checkoutPickupFooter : COPY.checkoutShipFooter}
+        {plan.isSplitFulfillment
+          ? COPY.checkoutSplitFooter
+          : plan.shippingLineCount === 0
+            ? COPY.checkoutPickupFooter
+            : COPY.checkoutShipFooter}
       </p>
-      {isPickup && (
+      {plan.honeyHousePickup && (
         <p className="text-xs text-center text-zinc-500 mt-2">
           {withPickupCopyLinks(COPY.checkoutPickupAfterPay)} Questions:{' '}
           <a href={`mailto:${CONTACT_EMAIL}`} className="underline">{CONTACT_EMAIL}</a>.

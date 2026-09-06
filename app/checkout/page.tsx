@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { HONEY_PRODUCT_IDS, isPurchasable, withCatalogFields } from '@/lib/products';
 import { calculateShippingCents } from '@/lib/checkout';
 import { CONTACT_EMAIL, COPY } from '@/lib/copy';
-import { withPickupMapsLink } from '@/lib/pickup-maps-link';
+import { withPickupCopyLinks, withPickupMapsLink } from '@/lib/pickup-maps-link';
 import { US_STATES } from '@/lib/us-states';
 
 interface CartItem {
@@ -300,7 +300,7 @@ export default function Checkout() {
       </p>
       {isPickup && (
         <p className="text-xs text-center text-zinc-500 mt-2">
-          {COPY.checkoutPickupAfterPay} Questions:{' '}
+          {withPickupCopyLinks(COPY.checkoutPickupAfterPay)} Questions:{' '}
           <a href={`mailto:${CONTACT_EMAIL}`} className="underline">{CONTACT_EMAIL}</a>.
         </p>
       )}

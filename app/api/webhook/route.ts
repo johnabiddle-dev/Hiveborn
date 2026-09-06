@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { Resend } from 'resend';
-import { CONTACT_EMAIL, COPY } from '@/lib/copy';
-import { htmlWithPickupMapsLink } from '@/lib/pickup-maps-link';
+import { CONTACT_EMAIL, CONTACT_PHONE, COPY } from '@/lib/copy';
+import { htmlWithPickupCopyLinks } from '@/lib/pickup-maps-link';
 
 export async function POST(req: NextRequest) {
   // Webhook endpoint is registered in Stripe as https://www.hiveborn.com/api/webhook
@@ -82,9 +82,9 @@ export async function POST(req: NextRequest) {
           <p><strong>Total: $${total.toFixed(2)}</strong></p>
           
           <h2 style="margin-top: 24px; font-size: 18px;">Fulfillment</h2>
-          <p>${htmlWithPickupMapsLink(fulfillment).replace(/\n/g, '<br>')}</p>
+          <p>${htmlWithPickupCopyLinks(fulfillment).replace(/\n/g, '<br>')}</p>
           
-          <p style="margin-top: 24px;">If you have any questions, reply to this email or contact us at ${CONTACT_EMAIL}.</p>
+          <p style="margin-top: 24px;">If you have any questions, reply to this email or contact us at ${htmlWithPickupCopyLinks(isPickup ? `${CONTACT_EMAIL} or text ${CONTACT_PHONE}` : CONTACT_EMAIL)}.</p>
           
           <p style="color: #666; font-size: 12px; margin-top: 32px;">
             Hiveborn • Quality products from the hive.

@@ -1,8 +1,10 @@
 export const CONTACT_EMAIL = 'johnabiddle@gmail.com';
+export const CONTACT_PHONE = '540-400-4586';
 export const PICKUP_ADDRESS = '93 Runaway Ln, New Market, VA 22844';
 /** Driveway entrance — Maps often sends the street address to the neighbor on Run Away Ln. */
 export const PICKUP_MAPS_PIN = 'https://maps.app.goo.gl/wJg3ERFndpF5vCB67';
 export const PICKUP_MAPS_NOTE = `Google Maps often routes to the neighbor — use this pin for the driveway entrance: ${PICKUP_MAPS_PIN}.`;
+export const PICKUP_SCHEDULE_NOTE = `To schedule pickup, email ${CONTACT_EMAIL} or text ${CONTACT_PHONE}.`;
 
 /** Customer-facing pickup + shipping copy. Pickup is order-online, email to schedule — hours vary, not walk-in. */
 export const COPY = {
@@ -17,6 +19,7 @@ export const COPY = {
   cartDrawerNote:
     'Pickup at the house is free — email johnabiddle@gmail.com to schedule. Hours vary. Virginia shipping starts at $11.',
   pickupMapsNote: PICKUP_MAPS_NOTE,
+  pickupScheduleNote: PICKUP_SCHEDULE_NOTE,
   pickupShippingBlurb: `Order online, then email ${CONTACT_EMAIL} to schedule pickup at the house (${PICKUP_ADDRESS}) — free. Hours vary; email first. ${PICKUP_MAPS_NOTE} Honey ships in Virginia only. Summer Lotion and Dipper ship continental US.`,
   footerPickup: 'New Market, VA · Email johnabiddle@gmail.com to schedule pickup ·',
   footerHoney: 'Honey ships in Virginia only.',
@@ -35,11 +38,11 @@ export const COPY = {
   honeyOutsideVaAlert: 'Honey can only be shipped to Virginia. Choose pickup at the house or a VA address.',
   continentalOnly: 'We only ship lotion and dippers in the continental US.',
   checkoutPickupFooter: `Pickup at the house is free — email ${CONTACT_EMAIL} to schedule. Hours vary; email first. No shipping charged. You’ll pay on Stripe first.`,
-  checkoutPickupAfterPay: `After you pay, email ${CONTACT_EMAIL} to schedule pickup. Hours vary; email first.`,
+  checkoutPickupAfterPay: `After you pay, email ${CONTACT_EMAIL} or text ${CONTACT_PHONE} to schedule pickup. Hours vary.`,
   checkoutShipFooter: 'Virginia shipping starts at $11. Honey products only to Virginia.',
-  successPickup: `Your order is marked for pickup at the house (${PICKUP_ADDRESS}). Email ${CONTACT_EMAIL} to schedule — hours vary; email first. When you pick up you can see the bees that made it. ${PICKUP_MAPS_NOTE}`,
-  successPickupBadge: '✓ Pickup at the house (email to schedule)',
-  webhookPickup: `Pickup at the house (${PICKUP_ADDRESS}). Email ${CONTACT_EMAIL} to schedule — hours vary; email first. When you pick up you can see the bees that made it. ${PICKUP_MAPS_NOTE}`,
+  successPickup: `Your order is marked for pickup at the house (${PICKUP_ADDRESS}). ${PICKUP_SCHEDULE_NOTE} Hours vary. When you pick up you can see the bees that made it. ${PICKUP_MAPS_NOTE}`,
+  successPickupBadge: '✓ Pickup at the house (email or text to schedule)',
+  webhookPickup: `Pickup at the house (${PICKUP_ADDRESS}). ${PICKUP_SCHEDULE_NOTE} Hours vary. When you pick up you can see the bees that made it. ${PICKUP_MAPS_NOTE}`,
   comingSoon: 'Coming soon',
   giftSetNote:
     'Hive Fresh honey is sold as a gift set: mason jar of honey, gift bag, and wooden dipper.',

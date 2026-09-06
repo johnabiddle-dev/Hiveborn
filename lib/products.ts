@@ -29,7 +29,7 @@ export const PRODUCTS: Product[] = [
     price: 1500,
     description:
       "Gift set: an 8 oz mason jar filled with 10 oz of honey by weight, packed in a gift bag with a wooden dipper. Fresh, hand-harvested from the hive.",
-    image: "/images/honey-medium.jpeg",
+    image: "/images/hero-gift-set.jpg",
     inStock: true,
   },
   {
@@ -38,7 +38,7 @@ export const PRODUCTS: Product[] = [
     price: 2500,
     description:
       "Gift set: a 16 oz mason jar filled with 20 oz of honey by weight, packed in a gift bag with a wooden dipper. Fresh, hand-harvested from the hive.",
-    image: "/images/honey-large.jpeg",
+    image: "/images/pint-gift-set.jpg",
     inStock: true,
   },
   {

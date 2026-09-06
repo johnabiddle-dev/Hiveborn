@@ -12,6 +12,7 @@ interface CartItem {
   description: string;
   quantity: number;
   image: string;
+  cardImage?: string;
 }
 
 export default function CartPage() {
@@ -62,7 +63,7 @@ export default function CartPage() {
       <div className="space-y-6 mb-10">
         {cart.map(item => (
           <div key={item.id} className="flex gap-6 border-b pb-6">
-            <img src={item.image} alt="" className="w-24 h-24 object-cover rounded-2xl" />
+            <img src={item.cardImage ?? item.image} alt="" className="w-24 h-24 object-cover rounded-2xl" />
             <div className="flex-1">
               <div className="font-semibold">{item.name}</div>
               <div className="text-xs text-zinc-500 mt-1">{item.description}</div>

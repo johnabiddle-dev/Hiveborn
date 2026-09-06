@@ -5,7 +5,8 @@ export interface Product {
   name: string;
   price: number; // in cents for Stripe
   description: string;
-  image: string; // URL or path
+  image: string; // URL or path — primary / web crop
+  cardImage?: string; // optional square crop for shop cards and cart thumbs
   inStock: boolean;
 }
 
@@ -29,7 +30,8 @@ export const PRODUCTS: Product[] = [
     price: 1500,
     description:
       "Gift set: an 8 oz mason jar filled with 10 oz of honey by weight, packed in a gift bag with a wooden dipper. Fresh, hand-harvested from the hive.",
-    image: "/images/hero-gift-set.jpg",
+    image: "/images/hero-8oz-web.jpg",
+    cardImage: "/images/hero-8oz-square.jpg",
     inStock: true,
   },
   {
@@ -38,7 +40,8 @@ export const PRODUCTS: Product[] = [
     price: 2500,
     description:
       "Gift set: a 16 oz mason jar filled with 20 oz of honey by weight, packed in a gift bag with a wooden dipper. Fresh, hand-harvested from the hive.",
-    image: "/images/pint-gift-set.jpg",
+    image: "/images/hero-pint-web.jpg",
+    cardImage: "/images/hero-pint-square.jpg",
     inStock: true,
   },
   {
@@ -74,6 +77,7 @@ export function withCatalogFields<T extends { id: number }>(item: T): T {
     price: product.price,
     description: product.description,
     image: product.image,
+    cardImage: product.cardImage,
   };
 }
 

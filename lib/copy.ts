@@ -2,7 +2,7 @@ export const CONTACT_EMAIL = 'johnabiddle@gmail.com';
 export const CONTACT_PHONE = '540-400-4586';
 export const PICKUP_ADDRESS = '93 Runaway Ln, New Market, VA 22844';
 /** Driveway entrance — Maps often sends the street address to the neighbor on Run Away Ln. */
-export const PICKUP_MAPS_PIN = 'https://maps.app.goo.gl/wJg3ERFndpF5vCB67';
+export const PICKUP_MAPS_PIN = 'https://www.google.com/maps?q=38.6449831,-78.6259750';
 export const PICKUP_MAPS_NOTE = `Google Maps often routes to the neighbor — use this pin for the driveway entrance: ${PICKUP_MAPS_PIN}.`;
 export const PICKUP_SCHEDULE_NOTE = `To schedule pickup, email ${CONTACT_EMAIL} or text ${CONTACT_PHONE}.`;
 

@@ -21,6 +21,8 @@ export interface FulfillmentPlan {
   hasHouseItems: boolean;
   hasAccessoryItems: boolean;
   pickupEligible: boolean;
+  /** Honey stays pickup whenever kitchen add-ons are also in the cart. */
+  honeyForcedPickup: boolean;
   /** Pickup applies only to honey/house line items. Accessories always ship. */
   honeyHousePickup: boolean;
   honeyShips: boolean;
@@ -38,7 +40,8 @@ export function planFulfillment(
   const hasHouseItems = items.some((item) => isHouseProduct(item.id));
   const hasAccessoryItems = items.some((item) => isAccessoryProduct(item.id));
   const pickupEligible = hasHoneyItems || hasHouseItems;
-  const honeyHousePickup = pickupEligible && requestedPickup;
+  const honeyForcedPickup = hasHoneyItems && hasAccessoryItems;
+  const honeyHousePickup = (pickupEligible && requestedPickup) || honeyForcedPickup;
   const honeyShips = hasHoneyItems && !honeyHousePickup;
   const houseShips = hasHouseItems && !honeyHousePickup;
   const accessoriesShip = hasAccessoryItems;
@@ -53,6 +56,7 @@ export function planFulfillment(
     hasHouseItems,
     hasAccessoryItems,
     pickupEligible,
+    honeyForcedPickup,
     honeyHousePickup,
     honeyShips,
     houseShips,
@@ -193,6 +197,7 @@ export function planFromMetadata(metadata: Record<string, string> | null | undef
     hasHouseItems,
     hasAccessoryItems,
     pickupEligible: hasHoneyItems || hasHouseItems,
+    honeyForcedPickup: hasHoneyItems && hasAccessoryItems,
     honeyHousePickup,
     honeyShips: m.honeyShips === 'true',
     houseShips: m.houseShips === 'true',

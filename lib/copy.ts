@@ -17,12 +17,12 @@ export const COPY = {
   honeyShipNote: 'VA shipping, or email johnabiddle@gmail.com to schedule pickup at the house.',
   otherShipNote: 'Ships continental US, or email johnabiddle@gmail.com to schedule pickup at the house.',
   accessoryShipNote:
-    'Kitchen add-on — not Hiveborn honey. Supplier dropships to your address (Hiveborn does not inventory or ship this). Estimated 7–21 business days; may ship from a US or China warehouse.',
+    'Kitchen add-on — not Hiveborn honey. Supplier dropships from overseas (often China). Typical delivery 2–4 weeks. Hiveborn does not inventory or ship this.',
   accessoryPageShipNote:
-    'This is a kitchen add-on for mason jars you already own (or for a Hiveborn gift jar if the mouth size matches). It is not cottage-food honey and is not sold as Hiveborn honey. Hiveborn does not inventory or ship this item — a supplier dropships it to the address you give at checkout. Estimated delivery 7–21 business days after purchase. Packages may ship from a US or China warehouse (supplier listing TBD — CJ/Doba URLs will replace this placeholder). Continental US only.',
+    'This is a kitchen add-on for mason jars you already own (or for a Hiveborn gift jar if the mouth size matches). It is not cottage-food honey and is not sold as Hiveborn honey. Hiveborn does not inventory or ship this item — a supplier dropships it to the address you give at checkout. These lids typically ship from China or another international warehouse. Plan on about 2–4 weeks. Exact CJ / AliExpress listing URLs will be wired when John can log into those accounts. Continental US only.',
   kitchenAddOnsHeading: 'Kitchen add-ons',
   kitchenAddOnsIntro:
-    'Mason-jar lids and pumps for jars you already own, or as an add-on for our gift jars if the mouth size matches. These are not Hiveborn honey. A supplier dropships them to you.',
+    'Mason-jar lids and pumps for jars you already own, or as an add-on for our gift jars if the mouth size matches. These are not Hiveborn honey. A supplier dropships them from overseas (often China; typically 2–4 weeks).',
   cartDrawerNote:
     'Honey pickup at the house is free — email johnabiddle@gmail.com to schedule. Kitchen add-ons always ship separately (supplier dropship). Virginia honey shipping starts at $11.',
   pickupMapsNote: PICKUP_MAPS_NOTE,
@@ -38,7 +38,7 @@ export const COPY = {
   checkoutPickupHint: `Pickup is at ${PICKUP_ADDRESS}. Hours vary — email ${CONTACT_EMAIL} to schedule. When you pick up you can see the bees that made it. ${PICKUP_MAPS_NOTE}`,
   checkoutUncheck: 'Uncheck only if you need Hiveborn to ship honey or house items.',
   checkoutPickupWithAccessories:
-    'Kitchen add-ons in this order still ship to the address below. Honey / house items can be picked up.',
+    'Honey gift sets in a mixed cart stay pickup-only. Kitchen add-ons still ship to the address below via supplier dropship.',
   checkoutPickupLine: 'Pickup at the house (free)',
   checkoutShippingHoney: 'Virginia shipping starts at $11',
   checkoutShippingOther: 'Shipping starts at $11',
@@ -46,11 +46,11 @@ export const COPY = {
   checkoutShippingSplit: 'Kitchen add-on shipping (honey is pickup) starts at $11',
   checkoutPickupTotal: 'Pickup total',
   checkoutShippingNote:
-    'Virginia shipping starts at $11. Honey ships in Virginia only. Summer Lotion, Honey Dipper, and kitchen add-ons ship continental US. Kitchen add-ons are supplier-dropshipped and may ship from a US or China warehouse (7–21 business days).',
+    'Virginia honey shipping starts at $11 when you are not picking up. Honey gift sets in a mixed cart stay pickup-only. Summer Lotion, Honey Dipper, and kitchen add-ons ship continental US. Kitchen add-ons are supplier-dropshipped from overseas (often China; typically 2–4 weeks).',
   checkoutSplitBanner:
-    'Split fulfillment: honey / house items are pickup at the house (email to schedule). Kitchen add-ons ship separately to the address below — a supplier dropships them. Hiveborn does not inventory or ship the lids. Estimated add-on delivery 7–21 business days; may ship from a US or China warehouse.',
+    'Split fulfillment: honey gift sets stay pickup at the house (email to schedule). Kitchen add-ons ship separately to the address below — a supplier dropships them from overseas (often China; typically 2–4 weeks). Hiveborn does not inventory or ship the lids.',
   checkoutAccessoryOnlyNote:
-    'Kitchen add-ons cannot be picked up. Enter the ship-to address — the supplier dropships to you. Estimated 7–21 business days; may ship from a US or China warehouse.',
+    'Kitchen add-ons cannot be picked up. Enter the ship-to address — the supplier dropships from overseas (often China). Typical delivery 2–4 weeks.',
   checkoutAddressHoney: 'Pickup / Contact Information',
   checkoutAddressShip: 'Shipping Address',
   checkoutAddressSplit: 'Ship-to address for kitchen add-ons (also used as pickup contact)',
@@ -65,15 +65,15 @@ export const COPY = {
   successPickup: `Your order is marked for pickup at the house (${PICKUP_ADDRESS}). ${PICKUP_SCHEDULE_NOTE} Hours vary. When you pick up you can see the bees that made it. ${PICKUP_MAPS_NOTE}`,
   successShip: 'Hiveborn items will be shipped to the address you provided.',
   successDropship:
-    'Kitchen add-ons will be supplier-dropshipped to the address you provided. Estimated 7–21 business days; packages may ship from a US or China warehouse. Hiveborn does not inventory or ship these items.',
-  successSplit: `Split fulfillment: honey / house items are pickup at the house (${PICKUP_ADDRESS}). ${PICKUP_SCHEDULE_NOTE} Kitchen add-ons ship separately to your address via supplier dropship (estimated 7–21 business days; may ship from a US or China warehouse).`,
+    'Kitchen add-ons will be supplier-dropshipped to the address you provided, typically from China or another international warehouse (about 2–4 weeks). Hiveborn does not inventory or ship these items.',
+  successSplit: `Split fulfillment: honey gift sets are pickup at the house (${PICKUP_ADDRESS}). ${PICKUP_SCHEDULE_NOTE} Kitchen add-ons ship separately to your address via supplier dropship (often China; typically 2–4 weeks).`,
   successPickupBadge: '✓ Pickup at the house (email or text to schedule)',
   successShipBadge: '✓ Hiveborn shipping',
   successDropshipBadge: '✓ Kitchen add-ons: supplier dropship',
   successSplitBadge: '✓ Split fulfillment — honey pickup + lids ship',
   webhookPickup: `Pickup at the house (${PICKUP_ADDRESS}). ${PICKUP_SCHEDULE_NOTE} Hours vary. When you pick up you can see the bees that made it. ${PICKUP_MAPS_NOTE}`,
   webhookDropship:
-    'Kitchen add-ons (not Hiveborn honey) are supplier-dropshipped separately to this address. Estimated 7–21 business days. Packages may ship from a US or China warehouse. Hiveborn does not inventory or ship these items.',
+    'Kitchen add-ons (not Hiveborn honey) are supplier-dropshipped separately to this address. Packages typically ship from China or another international warehouse (about 2–4 weeks). Hiveborn does not inventory or ship these items.',
   splitFulfillmentHeadline:
     'This order has split fulfillment: honey / house items are pickup at the house; kitchen add-ons ship separately via supplier dropship.',
   lineAccessoryFulfillment: 'Ships separately — supplier dropship',

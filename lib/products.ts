@@ -75,6 +75,9 @@ export const PRODUCTS: Product[] = [
     kind: 'accessory',
     fulfillment: 'dropship',
     amazonAsin: 'B0GKZSTKNM',
+    // Sourcing (ops, not shown): AliExpress MOQ1 https://www.aliexpress.com/item/3256809437441136.html
+    // Alibaba Wuhan QH / FriendBottles mason-jar pump. No Doba/CJ US stock found.
+    // Prefer CJ warehouse intake + auto-fulfill, or AliExpress+DSers, once John can log in.
   },
   {
     id: 7,
@@ -89,6 +92,9 @@ export const PRODUCTS: Product[] = [
     kind: 'accessory',
     fulfillment: 'dropship',
     amazonAsin: 'B0C49HMP73',
+    // Sourcing (ops, not shown): AliExpress "honey dipper mason jar lid" (confirm regular/70mm)
+    // or CJ Product Sourcing ticket with ASIN photos. Jarware retail ref only.
+    // No Doba/CJ catalog stock. Wire CJ/AliExpress when John can log in.
   },
   {
     id: 5,

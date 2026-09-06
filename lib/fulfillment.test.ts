@@ -37,11 +37,18 @@ test('mixed cart splits honey pickup and accessory dropship', () => {
   assert.equal(validateShipDestination(plan, 'CA').ok, true);
 });
 
-test('mixed cart shipping honey requires Virginia', () => {
+test('mixed cart keeps honey pickup-only even if shipping requested', () => {
   const plan = planFulfillment([{ id: 2 }, { id: 6 }], false);
-  assert.equal(plan.isSplitFulfillment, false);
+  assert.equal(plan.honeyForcedPickup, true);
+  assert.equal(plan.isSplitFulfillment, true);
+  assert.equal(plan.honeyShips, false);
+  assert.equal(plan.shippingLineCount, 1);
+  assert.equal(validateShipDestination(plan, 'CA').ok, true);
+});
+
+test('honey-only shipping still requires Virginia', () => {
+  const plan = planFulfillment([{ id: 2 }], false);
   assert.equal(plan.honeyShips, true);
-  assert.equal(plan.shippingLineCount, 2);
   assert.equal(validateShipDestination(plan, 'CA').ok, false);
   assert.equal(validateShipDestination(plan, 'VA').ok, true);
 });

@@ -196,7 +196,8 @@ export default function Checkout() {
           <label className="flex items-start gap-3 text-sm mb-4 cursor-pointer select-none rounded-2xl border-2 border-amber-500 bg-amber-50 p-4">
             <input
               type="checkbox"
-              checked={isPickup}
+              checked={plan.honeyHousePickup}
+              disabled={plan.honeyForcedPickup}
               onChange={(e) => setIsPickup(e.target.checked)}
               className="w-5 h-5 mt-0.5 accent-black shrink-0"
             />
@@ -204,7 +205,9 @@ export default function Checkout() {
               <span className="font-semibold text-black">{COPY.checkoutPickupLabel}</span>
               <span className="block text-zinc-600 mt-0.5">{withPickupMapsLink(COPY.checkoutPickupHint)}</span>
               <span className="block text-zinc-600 mt-0.5">
-                {plan.hasAccessoryItems ? COPY.checkoutPickupWithAccessories : COPY.checkoutUncheck}
+                {plan.honeyForcedPickup || plan.hasAccessoryItems
+                  ? COPY.checkoutPickupWithAccessories
+                  : COPY.checkoutUncheck}
               </span>
             </span>
           </label>

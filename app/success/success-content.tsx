@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { COPY } from '@/lib/copy';
+import { withPickupMapsLink } from '@/lib/pickup-maps-link';
 
 interface VerifiedOrder {
   verified: boolean;
@@ -74,7 +75,7 @@ export default function SuccessContent() {
 
       {status === 'success' && (
         <>
-          <p className="text-xl text-emerald-600 mb-6">{message}</p>
+          <p className="text-xl text-emerald-600 mb-6">{withPickupMapsLink(message)}</p>
 
           {order && (
             <div className="text-left bg-zinc-50 rounded-2xl p-4 mb-8 text-sm text-zinc-600">

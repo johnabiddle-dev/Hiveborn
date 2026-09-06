@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { ShoppingCart, Plus, X } from 'lucide-react';
 import { PRODUCTS, Product, FEATURED_PRODUCT_ID, isPurchasable, productShipNote, withCatalogFields } from '@/lib/products';
-import { CONTACT_EMAIL, COPY, PICKUP_ADDRESS } from '@/lib/copy';
+import { CONTACT_EMAIL, COPY, PICKUP_ADDRESS, PICKUP_MAPS_NOTE } from '@/lib/copy';
+import { withPickupMapsLink } from '@/lib/pickup-maps-link';
 
 interface CartItem extends Product {
   quantity: number;
@@ -95,7 +96,7 @@ export default function HivebornShop() {
       <div className="max-w-2xl mx-auto px-6 py-10 sm:py-12 text-sm sm:text-base text-zinc-700 leading-relaxed">
         <h2 className="text-xl font-semibold tracking-tight text-black mb-3">About the farm</h2>
         <p>
-          We keep bees in New Market, Virginia, and harvest by hand. The honey is raw and unfiltered. Hive Fresh honey is sold as a gift set: mason jar of honey, gift bag, and wooden dipper. Reaper Infused Hot Honey is our spicy jar. Order online, then email {CONTACT_EMAIL} to schedule pickup at the house at {PICKUP_ADDRESS}. Hours vary; email first. When you pick up you can see the bees that made it. Honey orders ship inside Virginia only. Summer Lotion and Honey Dippers ship continental US. Questions:{' '}
+          We keep bees in New Market, Virginia, and harvest by hand. The honey is raw and unfiltered. Hive Fresh honey is sold as a gift set: mason jar of honey, gift bag, and wooden dipper. Reaper Infused Hot Honey is our spicy jar. Order online, then email {CONTACT_EMAIL} to schedule pickup at the house at {PICKUP_ADDRESS}. Hours vary; email first. When you pick up you can see the bees that made it. {withPickupMapsLink(PICKUP_MAPS_NOTE)} Honey orders ship inside Virginia only. Summer Lotion and Honey Dippers ship continental US. Questions:{' '}
           <a href={`mailto:${CONTACT_EMAIL}`} className="underline">{CONTACT_EMAIL}</a>.
         </p>
       </div>
@@ -235,7 +236,7 @@ export default function HivebornShop() {
         <div className="grid md:grid-cols-3 gap-8">
           <div>
             <div className="font-medium text-black mb-1">Pickup & shipping</div>
-            <p>{COPY.pickupShippingBlurb}</p>
+            <p>{withPickupMapsLink(COPY.pickupShippingBlurb)}</p>
           </div>
           <div>
             <div className="font-medium text-black mb-1">Satisfaction guaranteed</div>

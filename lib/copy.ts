@@ -32,7 +32,7 @@ export const COPY = {
   footerHoney: 'Honey ships in Virginia only. Kitchen add-ons dropship separately.',
   cartPageNote: `Order online, then email ${CONTACT_EMAIL} to schedule pickup at the house (${PICKUP_ADDRESS}) — free. Hours vary; email first. ${PICKUP_MAPS_NOTE} Virginia honey shipping starts at $11. Honey ships in Virginia only. Kitchen add-ons always require a ship-to address — supplier dropships them separately.`,
   cartSplitNote:
-    'Mixed cart: honey gift sets follow pickup / Virginia ship rules. Kitchen add-ons always ship to your address via supplier dropship. You will see this split clearly at checkout.',
+    'Mixed cart: honey gift sets stay pickup at the house (email to schedule). Kitchen add-ons always ship to your address via supplier dropship.',
   checkoutIntro: `Order online, then email ${CONTACT_EMAIL} to schedule pickup at the house (${PICKUP_ADDRESS}). Hours vary; email first. Honey ships in Virginia; lotion and dippers ship continental US. Kitchen add-ons always ship separately (supplier dropship).`,
   checkoutPickupLabel: 'Pickup honey / house items at the house — free. Email to schedule.',
   checkoutPickupHint: `Pickup is at ${PICKUP_ADDRESS}. Hours vary — email ${CONTACT_EMAIL} to schedule. When you pick up you can see the bees that made it. ${PICKUP_MAPS_NOTE}`,

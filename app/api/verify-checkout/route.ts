@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
+import { planFromMetadata } from '@/lib/fulfillment';
 
 export async function POST(request: NextRequest) {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
@@ -24,7 +25,7 @@ export async function POST(request: NextRequest) {
     }
 
     const metadata = session.metadata || {};
-    const isPickup = metadata.isPickup === 'true';
+    const plan = planFromMetadata(metadata);
     let shippingAddress = null;
 
     try {
@@ -49,7 +50,11 @@ export async function POST(request: NextRequest) {
       verified: true,
       amountTotal: session.amount_total,
       currency: session.currency,
-      isPickup,
+      isPickup: plan.honeyHousePickup,
+      isSplitFulfillment: plan.isSplitFulfillment,
+      hasAccessoryItems: plan.hasAccessoryItems,
+      accessoriesShip: plan.accessoriesShip,
+      plan,
       shippingAddress,
       items,
       customerEmail: session.customer_details?.email || null,

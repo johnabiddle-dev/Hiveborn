@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { Resend } from 'resend';
-import { CONTACT_EMAIL, CONTACT_PHONE, COPY } from '@/lib/copy';
+import { CONTACT_EMAIL, CONTACT_PHONE } from '@/lib/copy';
+import { formatAddress, fulfillmentCustomerText, planFromMetadata } from '@/lib/fulfillment';
 import { htmlWithPickupCopyLinks } from '@/lib/pickup-maps-link';
 
 export async function POST(req: NextRequest) {
@@ -40,9 +41,9 @@ export async function POST(req: NextRequest) {
         expand: ['line_items'],
       });
 
-      const metadata = fullSession.metadata || {};
-      const isPickup = metadata.isPickup === 'true';
-      let shippingAddress: unknown = {};
+      const metadata = (fullSession.metadata || {}) as Record<string, string>;
+      const plan = planFromMetadata(metadata);
+      let shippingAddress: { name?: string; address?: string; city?: string; state?: string; zip?: string } = {};
       try {
         if (metadata.shippingAddress) {
           shippingAddress = JSON.parse(metadata.shippingAddress);
@@ -52,8 +53,7 @@ export async function POST(req: NextRequest) {
       }
 
       const customerEmail = fullSession.customer_details?.email || '';
-      const sa = shippingAddress as { name?: string } | null;
-      const customerName = fullSession.customer_details?.name || sa?.name || 'Customer';
+      const customerName = fullSession.customer_details?.name || shippingAddress.name || 'Customer';
 
       // Build items list from line items (includes products + shipping if any)
       const items = (fullSession.line_items?.data || []).map((item: unknown) => {
@@ -65,16 +65,15 @@ export async function POST(req: NextRequest) {
       }).join('\n');
 
       const total = (fullSession.amount_total || 0) / 100;
-      const sa2 = shippingAddress as { name?: string; address?: string; city?: string; state?: string; zip?: string } | null;
-      const fulfillment = isPickup
-        ? COPY.webhookPickup
-        : `Shipping to:\n${sa2?.name || ''}\n${sa2?.address || ''}\n${sa2?.city || ''}, ${sa2?.state || ''} ${sa2?.zip || ''}`;
+      const addressText = formatAddress(shippingAddress);
+      const fulfillment = fulfillmentCustomerText(plan, addressText);
 
       const emailHtml = `
         <div style="font-family: system-ui, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <h1 style="color: #111;">Hiveborn Order Confirmation</h1>
           <p>Hi ${customerName},</p>
           <p>Thank you for your order! Your payment has been confirmed.</p>
+          ${plan.isSplitFulfillment ? `<p style="background:#fffbeb;border:1px solid #f59e0b;padding:12px;border-radius:12px;"><strong>Split fulfillment:</strong> honey / house items are pickup at the house (email to schedule). Kitchen add-ons ship separately via supplier dropship.</p>` : ''}
           
           <h2 style="margin-top: 24px; font-size: 18px;">Order Details</h2>
           <pre style="background: #f5f5f5; padding: 16px; border-radius: 8px; white-space: pre-wrap;">${items}</pre>
@@ -84,10 +83,10 @@ export async function POST(req: NextRequest) {
           <h2 style="margin-top: 24px; font-size: 18px;">Fulfillment</h2>
           <p>${htmlWithPickupCopyLinks(fulfillment).replace(/\n/g, '<br>')}</p>
           
-          <p style="margin-top: 24px;">If you have any questions, reply to this email or contact us at ${htmlWithPickupCopyLinks(isPickup ? `${CONTACT_EMAIL} or text ${CONTACT_PHONE}` : CONTACT_EMAIL)}.</p>
+          <p style="margin-top: 24px;">If you have any questions, reply to this email or contact us at ${htmlWithPickupCopyLinks(plan.honeyHousePickup ? `${CONTACT_EMAIL} or text ${CONTACT_PHONE}` : CONTACT_EMAIL)}.</p>
           
           <p style="color: #666; font-size: 12px; margin-top: 32px;">
-            Hiveborn • Quality products from the hive.
+            Hiveborn • Quality products from the hive. Kitchen add-ons are not Hiveborn honey.
           </p>
         </div>
       `;
@@ -101,7 +100,11 @@ export async function POST(req: NextRequest) {
             from: 'Hiveborn <onboarding@resend.dev>',
             to: customerEmail,
             bcc: CONTACT_EMAIL, // Owner notification
-            subject: `Hiveborn Order Confirmation`,
+            subject: plan.isSplitFulfillment
+              ? 'Hiveborn Order Confirmation — split fulfillment (pickup + dropship)'
+              : plan.accessoriesShip && !plan.honeyHousePickup
+                ? 'Hiveborn Order Confirmation — kitchen add-on dropship'
+                : `Hiveborn Order Confirmation`,
             html: emailHtml,
           });
           console.log('Order confirmation email sent to', customerEmail);

@@ -1,4 +1,5 @@
-import { HONEY_PRODUCT_IDS, PRODUCTS, Product } from '@/lib/products';
+import { planFulfillment, type FulfillmentPlan } from '@/lib/fulfillment';
+import { PRODUCTS, Product } from '@/lib/products';
 
 export const MAX_QUANTITY_PER_ITEM = 99;
 
@@ -23,7 +24,13 @@ export interface StripeLineItem {
 }
 
 export type ResolveResult =
-  | { ok: true; resolvedItems: ResolvedItem[]; hasHoneyItems: boolean }
+  | {
+      ok: true;
+      resolvedItems: ResolvedItem[];
+      hasHoneyItems: boolean;
+      hasAccessoryItems: boolean;
+      plan: (requestedPickup: boolean) => FulfillmentPlan;
+    }
   | { ok: false; error: string };
 
 // Resolve raw client cart lines against the server catalog. Only the product id
@@ -58,17 +65,23 @@ export function resolveCartItems(items: unknown): ResolveResult {
     });
   }
 
-  const hasHoneyItems = resolvedItems.some((item) => HONEY_PRODUCT_IDS.includes(item.id));
-  return { ok: true, resolvedItems, hasHoneyItems };
+  return {
+    ok: true,
+    resolvedItems,
+    hasHoneyItems: resolvedItems.some((item) => PRODUCT_BY_ID.get(item.id)?.kind === 'honey'),
+    hasAccessoryItems: resolvedItems.some((item) => PRODUCT_BY_ID.get(item.id)?.kind === 'accessory'),
+    plan: (requestedPickup: boolean) => planFulfillment(resolvedItems, requestedPickup),
+  };
 }
 
 // Server-authoritative shipping. Matches the client order-summary formula
-// (per distinct line item) so the charged total equals what the customer saw.
-export function calculateShippingCents(numLineItems: number): number {
-  if (numLineItems === 0) return 0;
+// (per distinct shipping line item) so the charged total equals what the customer saw.
+// Pickup honey/house items are excluded; dropship accessories always count.
+export function calculateShippingCents(numShippingLineItems: number): number {
+  if (numShippingLineItems === 0) return 0;
   const base = 1100; // minimum $11.00
   const perAdditional = 400; // +$4 per additional item (simple volume proxy)
-  return base + (numLineItems - 1) * perAdditional;
+  return base + (numShippingLineItems - 1) * perAdditional;
 }
 
 export function toStripeLineItems(resolvedItems: ResolvedItem[]): StripeLineItem[] {

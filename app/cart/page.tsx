@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { COPY } from '@/lib/copy';
+import { lineFulfillmentLabel, planFulfillment } from '@/lib/fulfillment';
 import { withPickupMapsLink } from '@/lib/pickup-maps-link';
 import { isPurchasable, withCatalogFields } from '@/lib/products';
 
@@ -47,6 +48,7 @@ export default function CartPage() {
   };
 
   const total = cart.reduce((sum, item) => sum + (item.price * item.quantity) / 100, 0);
+  const plan = planFulfillment(cart, true);
 
   if (cart.length === 0) {
     return (
@@ -61,6 +63,17 @@ export default function CartPage() {
     <div className="max-w-3xl mx-auto px-6 py-12">
       <h1 className="text-4xl font-semibold tracking-tighter mb-8">Your Cart</h1>
 
+      {plan.isSplitFulfillment && (
+        <p className="text-sm text-amber-900 bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-8">
+          {COPY.cartSplitNote}
+        </p>
+      )}
+      {plan.hasAccessoryItems && !plan.pickupEligible && (
+        <p className="text-sm text-zinc-700 bg-zinc-50 border rounded-2xl p-4 mb-8">
+          {COPY.checkoutAccessoryOnlyNote}
+        </p>
+      )}
+
       <div className="space-y-6 mb-10">
         {cart.map(item => (
           <div key={item.id} className="flex gap-6 border-b pb-6">
@@ -68,6 +81,7 @@ export default function CartPage() {
             <div className="flex-1">
               <div className="font-semibold">{item.name}</div>
               <div className="text-xs text-zinc-500 mt-1">{item.description}</div>
+              <div className="text-xs text-amber-800 mt-1">{lineFulfillmentLabel(item.id, plan)}</div>
               <div className="text-sm text-zinc-600 mt-1">${(item.price / 100).toFixed(2)}</div>
               <div className="flex items-center gap-4 mt-3 text-sm">
                 <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="px-2 border rounded">-</button>

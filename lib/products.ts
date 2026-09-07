@@ -16,6 +16,8 @@ export interface Product {
   fulfillment: Fulfillment;
   /** Optional Amazon reference ASIN for sourcing — not a buy link. */
   amazonAsin?: string;
+  /** When false, the SKU is unpublished: no shop card, no product page, not checkoutable. */
+  published?: boolean;
 }
 
 export const HONEY_PRODUCT_IDS = [2, 3, 4]; // Honey 1/2 pint, pint jar 20 oz, Reaper Infused Hot Honey 1/2 pint
@@ -75,6 +77,8 @@ export const PRODUCTS: Product[] = [
     kind: 'accessory',
     fulfillment: 'dropship',
     amazonAsin: 'B0GKZSTKNM',
+    published: false,
+    // Unpublished until sources are secured. Keep record for a later relaunch.
     // Sourcing (ops, not shown): AliExpress MOQ1 https://www.aliexpress.com/item/3256809437441136.html
     // Alibaba Wuhan QH / FriendBottles mason-jar pump. No Doba/CJ US stock found.
     // Prefer CJ warehouse intake + auto-fulfill, or AliExpress+DSers, once John can log in.
@@ -92,6 +96,8 @@ export const PRODUCTS: Product[] = [
     kind: 'accessory',
     fulfillment: 'dropship',
     amazonAsin: 'B0C49HMP73',
+    published: false,
+    // Unpublished until sources are secured. Keep record for a later relaunch.
     // Sourcing (ops, not shown): AliExpress "honey dipper mason jar lid" (confirm regular/70mm)
     // or CJ Product Sourcing ticket with ASIN photos. Jarware retail ref only.
     // No Doba/CJ catalog stock. Wire CJ/AliExpress when John can log in.
@@ -120,12 +126,22 @@ export const PRODUCTS: Product[] = [
   },
 ];
 
+export function isPublished(product: Product | undefined): boolean {
+  return product != null && product.published !== false;
+}
+
 export function getProductById(id: number): Product | undefined {
   return PRODUCTS.find((p) => p.id === id);
 }
 
 export function getProductBySlug(slug: string): Product | undefined {
   return PRODUCTS.find((p) => p.slug === slug);
+}
+
+/** Public shop / product-page lookup. Unpublished SKUs 404. */
+export function getPublishedProductBySlug(slug: string): Product | undefined {
+  const product = getProductBySlug(slug);
+  return isPublished(product) ? product : undefined;
 }
 
 export function productPath(product: Pick<Product, 'slug'>): string {
@@ -146,7 +162,7 @@ export function isHouseProduct(id: number): boolean {
 
 export function isPurchasable(id: number): boolean {
   const product = getProductById(id);
-  return product?.inStock === true;
+  return isPublished(product) && product?.inStock === true;
 }
 
 /** Overlay catalog name/price/description so cart copy cannot stay stale in localStorage. */
@@ -172,6 +188,7 @@ export function productShipNote(id: number): string {
   return product?.kind === 'honey' ? COPY.honeyShipNote : COPY.otherShipNote;
 }
 
-export const HONEY_PRODUCTS = PRODUCTS.filter((p) => p.kind === 'honey');
-export const ACCESSORY_PRODUCTS = PRODUCTS.filter((p) => p.kind === 'accessory');
-export const HOUSE_PRODUCTS = PRODUCTS.filter((p) => p.kind === 'house');
+export const PUBLISHED_PRODUCTS = PRODUCTS.filter((p) => isPublished(p));
+export const HONEY_PRODUCTS = PUBLISHED_PRODUCTS.filter((p) => p.kind === 'honey');
+export const ACCESSORY_PRODUCTS = PUBLISHED_PRODUCTS.filter((p) => p.kind === 'accessory');
+export const HOUSE_PRODUCTS = PUBLISHED_PRODUCTS.filter((p) => p.kind === 'house');

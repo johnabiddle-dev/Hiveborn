@@ -180,7 +180,7 @@ export default function HivebornShop() {
       <div className="max-w-2xl mx-auto px-6 py-10 sm:py-12 text-sm sm:text-base text-zinc-700 leading-relaxed">
         <h2 className="text-xl font-semibold tracking-tight text-black mb-3">About the farm</h2>
         <p>
-          We keep bees in New Market, Virginia, and harvest by hand. The honey is raw and unfiltered. Hive Fresh honey is sold as a gift set: mason jar of honey, gift bag, and wooden dipper. Reaper Infused Hot Honey is our spicy jar. Order online, then email {CONTACT_EMAIL} to schedule pickup at the house at {PICKUP_ADDRESS}. Hours vary; email first. When you pick up you can see the bees that made it. {withPickupMapsLink(PICKUP_MAPS_NOTE)} Honey orders ship inside Virginia only. Summer Lotion and Honey Dippers ship continental US. Kitchen mason-jar add-ons (wide-mouth pump lids and regular-mouth dipper lids) are not Hiveborn honey — a supplier dropships them to your address. Questions:{' '}
+          We keep bees in New Market, Virginia, and harvest by hand. The honey is raw and unfiltered. Hive Fresh honey is sold as a gift set: mason jar of honey, gift bag, and wooden dipper. Reaper Infused Hot Honey is our spicy jar. Order online, then email {CONTACT_EMAIL} to schedule pickup at the house at {PICKUP_ADDRESS}. Hours vary; email first. When you pick up you can see the bees that made it. {withPickupMapsLink(PICKUP_MAPS_NOTE)} Honey orders ship inside Virginia only. Summer Lotion and Honey Dippers ship continental US. Questions:{' '}
           <a href={`mailto:${CONTACT_EMAIL}`} className="underline">{CONTACT_EMAIL}</a>.
         </p>
       </div>
@@ -203,17 +203,19 @@ export default function HivebornShop() {
           ))}
         </div>
 
-        <div id="kitchen-add-ons" className="mt-16 pt-4">
-          <h3 className="text-3xl font-semibold tracking-tighter mb-2 text-center">{COPY.kitchenAddOnsHeading}</h3>
-          <p className="text-center text-zinc-600 mb-10 max-w-xl mx-auto">
-            {COPY.kitchenAddOnsIntro}
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {ACCESSORY_PRODUCTS.map((product) => (
-              <ProductCard key={product.id} product={product} onAdd={addToCart} />
-            ))}
+        {ACCESSORY_PRODUCTS.length > 0 && (
+          <div id="kitchen-add-ons" className="mt-16 pt-4">
+            <h3 className="text-3xl font-semibold tracking-tighter mb-2 text-center">{COPY.kitchenAddOnsHeading}</h3>
+            <p className="text-center text-zinc-600 mb-10 max-w-xl mx-auto">
+              {COPY.kitchenAddOnsIntro}
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              {ACCESSORY_PRODUCTS.map((product) => (
+                <ProductCard key={product.id} product={product} onAdd={addToCart} />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="mt-16">
           <h3 className="text-3xl font-semibold tracking-tighter mb-8 text-center">From the hive</h3>

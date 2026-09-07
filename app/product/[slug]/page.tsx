@@ -2,18 +2,18 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { COPY } from '@/lib/copy';
-import { getProductBySlug, PRODUCTS } from '@/lib/products';
+import { getPublishedProductBySlug, PUBLISHED_PRODUCTS } from '@/lib/products';
 import AddToCartButton from './add-to-cart-button';
 
 type Props = { params: Promise<{ slug: string }> };
 
 export function generateStaticParams() {
-  return PRODUCTS.map((product) => ({ slug: product.slug }));
+  return PUBLISHED_PRODUCTS.map((product) => ({ slug: product.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = getPublishedProductBySlug(slug);
   if (!product) {
     return { title: 'Product — Hiveborn' };
   }
@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = getPublishedProductBySlug(slug);
   if (!product) {
     notFound();
   }

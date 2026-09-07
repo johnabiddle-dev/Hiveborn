@@ -126,7 +126,7 @@ export const PRODUCTS: Product[] = [
   },
 ];
 
-export function isPublished(product: Product | undefined): boolean {
+export function isPublished(product: Product | undefined): product is Product {
   return product != null && product.published !== false;
 }
 

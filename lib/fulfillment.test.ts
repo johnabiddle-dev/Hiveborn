@@ -64,14 +64,21 @@ test('out-of-stock Reaper cannot resolve', () => {
   assert.equal(resolved.ok, false);
 });
 
-test('server catalog prices accessories', () => {
-  const resolved = resolveCartItems([{ id: 6, quantity: 2, price: 1 }]);
+test('unpublished kitchen add-ons cannot resolve for checkout', () => {
+  const pumpLids = resolveCartItems([{ id: 6, quantity: 1, price: 1 }]);
+  assert.equal(pumpLids.ok, false);
+  const dipperLid = resolveCartItems([{ id: 7, quantity: 1 }]);
+  assert.equal(dipperLid.ok, false);
+});
+
+test('honey gift sets still resolve at catalog prices', () => {
+  const resolved = resolveCartItems([{ id: 2, quantity: 1, price: 1 }, { id: 3, quantity: 1 }]);
   assert.equal(resolved.ok, true);
   if (resolved.ok) {
-    assert.equal(resolved.resolvedItems[0].price, 1499);
-    assert.equal(resolved.hasAccessoryItems, true);
-    const plan = resolved.plan(true);
-    assert.equal(plan.honeyHousePickup, false);
+    assert.equal(resolved.resolvedItems[0].price, 1500);
+    assert.equal(resolved.resolvedItems[1].price, 2500);
+    assert.equal(resolved.hasHoneyItems, true);
+    assert.equal(resolved.hasAccessoryItems, false);
   }
 });
 

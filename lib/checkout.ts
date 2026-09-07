@@ -1,5 +1,5 @@
 import { planFulfillment, type FulfillmentPlan } from '@/lib/fulfillment';
-import { PRODUCTS, Product } from '@/lib/products';
+import { PRODUCTS, Product, isPublished } from '@/lib/products';
 
 export const MAX_QUANTITY_PER_ITEM = 99;
 
@@ -47,7 +47,7 @@ export function resolveCartItems(items: unknown): ResolveResult {
     const id = Number(i?.id);
     const quantity = Number(i?.quantity);
     const product = Number.isInteger(id) ? PRODUCT_BY_ID.get(id) : undefined;
-    if (!product) {
+    if (!isPublished(product)) {
       return { ok: false, error: `Unknown product in cart (id: ${String(i?.id)}).` };
     }
     if (!product.inStock) {

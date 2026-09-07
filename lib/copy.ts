@@ -10,10 +10,10 @@ export const PICKUP_SCHEDULE_NOTE = `To schedule pickup, email ${CONTACT_EMAIL} 
 export const COPY = {
   metaTitle: 'Hiveborn — Raw honey from New Market, VA',
   metaDescription:
-    'Raw, unfiltered honey from New Market, Virginia. Order online and email johnabiddle@gmail.com to schedule pickup at the house. Honey ships in Virginia only. Kitchen mason-jar add-ons are supplier-dropshipped separately.',
+    'Raw, unfiltered honey from New Market, Virginia. Order online and email johnabiddle@gmail.com to schedule pickup at the house. Honey ships in Virginia only.',
   heroSub: 'Raw honey from New Market, Virginia.',
   heroPickup:
-    'Order online and email johnabiddle@gmail.com to schedule pickup at the house, or we ship honey inside Virginia. Kitchen add-ons ship separately via supplier dropship.',
+    'Order online and email johnabiddle@gmail.com to schedule pickup at the house, or we ship honey inside Virginia.',
   honeyShipNote: 'VA shipping, or email johnabiddle@gmail.com to schedule pickup at the house.',
   otherShipNote: 'Ships continental US, or email johnabiddle@gmail.com to schedule pickup at the house.',
   accessoryShipNote:
@@ -24,16 +24,16 @@ export const COPY = {
   kitchenAddOnsIntro:
     'Mason-jar lids and pumps for jars you already own, or as an add-on for our gift jars if the mouth size matches. These are not Hiveborn honey. A supplier dropships them from overseas (often China; typically 2–4 weeks).',
   cartDrawerNote:
-    'Honey pickup at the house is free — email johnabiddle@gmail.com to schedule. Kitchen add-ons always ship separately (supplier dropship). Virginia honey shipping starts at $11.',
+    'Pickup at the house is free — email johnabiddle@gmail.com to schedule. Hours vary. Virginia shipping starts at $11.',
   pickupMapsNote: PICKUP_MAPS_NOTE,
   pickupScheduleNote: PICKUP_SCHEDULE_NOTE,
-  pickupShippingBlurb: `Order online, then email ${CONTACT_EMAIL} to schedule pickup at the house (${PICKUP_ADDRESS}) — free. Hours vary; email first. ${PICKUP_MAPS_NOTE} Honey ships in Virginia only. Summer Lotion and Dipper ship continental US. Kitchen mason-jar add-ons are supplier-dropshipped separately and cannot be picked up.`,
+  pickupShippingBlurb: `Order online, then email ${CONTACT_EMAIL} to schedule pickup at the house (${PICKUP_ADDRESS}) — free. Hours vary; email first. ${PICKUP_MAPS_NOTE} Honey ships in Virginia only. Summer Lotion and Dipper ship continental US.`,
   footerPickup: 'New Market, VA · Email johnabiddle@gmail.com to schedule pickup ·',
-  footerHoney: 'Honey ships in Virginia only. Kitchen add-ons dropship separately.',
-  cartPageNote: `Order online, then email ${CONTACT_EMAIL} to schedule pickup at the house (${PICKUP_ADDRESS}) — free. Hours vary; email first. ${PICKUP_MAPS_NOTE} Virginia honey shipping starts at $11. Honey ships in Virginia only. Kitchen add-ons always require a ship-to address — supplier dropships them separately.`,
+  footerHoney: 'Honey ships in Virginia only.',
+  cartPageNote: `Order online, then email ${CONTACT_EMAIL} to schedule pickup at the house (${PICKUP_ADDRESS}) — free. Hours vary; email first. ${PICKUP_MAPS_NOTE} Virginia shipping starts at $11. Honey ships in Virginia only.`,
   cartSplitNote:
     'Mixed cart: honey gift sets stay pickup at the house (email to schedule). Kitchen add-ons always ship to your address via supplier dropship.',
-  checkoutIntro: `Order online, then email ${CONTACT_EMAIL} to schedule pickup at the house (${PICKUP_ADDRESS}). Hours vary; email first. Honey ships in Virginia; lotion and dippers ship continental US. Kitchen add-ons always ship separately (supplier dropship).`,
+  checkoutIntro: `Order online, then email ${CONTACT_EMAIL} to schedule pickup at the house (${PICKUP_ADDRESS}). Hours vary; email first. Honey ships in Virginia; lotion and dippers ship continental US.`,
   checkoutPickupLabel: 'Pickup honey / house items at the house — free. Email to schedule.',
   checkoutPickupHint: `Pickup is at ${PICKUP_ADDRESS}. Hours vary — email ${CONTACT_EMAIL} to schedule. When you pick up you can see the bees that made it. ${PICKUP_MAPS_NOTE}`,
   checkoutUncheck: 'Uncheck only if you need Hiveborn to ship honey or house items.',
@@ -46,7 +46,7 @@ export const COPY = {
   checkoutShippingSplit: 'Kitchen add-on shipping (honey is pickup) starts at $11',
   checkoutPickupTotal: 'Pickup total',
   checkoutShippingNote:
-    'Virginia honey shipping starts at $11 when you are not picking up. Honey gift sets in a mixed cart stay pickup-only. Summer Lotion, Honey Dipper, and kitchen add-ons ship continental US. Kitchen add-ons are supplier-dropshipped from overseas (often China; typically 2–4 weeks).',
+    'Virginia shipping starts at $11. Honey ships in Virginia only. Summer Lotion and Honey Dipper ship continental US.',
   checkoutSplitBanner:
     'Split fulfillment: honey gift sets stay pickup at the house (email to schedule). Kitchen add-ons ship separately to the address below — a supplier dropships them from overseas (often China; typically 2–4 weeks). Hiveborn does not inventory or ship the lids.',
   checkoutAccessoryOnlyNote:
@@ -56,10 +56,10 @@ export const COPY = {
   checkoutAddressSplit: 'Ship-to address for kitchen add-ons (also used as pickup contact)',
   honeyOutsideVa: 'Honey cannot ship outside Virginia. Choose pickup at the house or a VA address.',
   honeyOutsideVaAlert: 'Honey can only be shipped to Virginia. Choose pickup at the house or a VA address.',
-  continentalOnly: 'We only ship lotion, dippers, and kitchen add-ons in the continental US.',
+  continentalOnly: 'We only ship lotion and dippers in the continental US.',
   checkoutPickupFooter: `Pickup at the house is free — email ${CONTACT_EMAIL} to schedule. Hours vary; email first. No shipping charged for pickup items. You’ll pay on Stripe first.`,
   checkoutPickupAfterPay: `After you pay, email ${CONTACT_EMAIL} or text ${CONTACT_PHONE} to schedule honey / house-item pickup. Hours vary.`,
-  checkoutShipFooter: 'Virginia honey shipping starts at $11. Honey products only to Virginia. Kitchen add-ons ship separately via supplier dropship.',
+  checkoutShipFooter: 'Virginia shipping starts at $11. Honey products only to Virginia.',
   checkoutSplitFooter:
     'You will pay once. Honey / house items are marked for pickup (email to schedule). Kitchen add-ons ship separately to your address via supplier dropship.',
   successPickup: `Your order is marked for pickup at the house (${PICKUP_ADDRESS}). ${PICKUP_SCHEDULE_NOTE} Hours vary. When you pick up you can see the bees that made it. ${PICKUP_MAPS_NOTE}`,

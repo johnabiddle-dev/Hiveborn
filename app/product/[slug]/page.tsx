@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { PickupConversionCta } from '@/app/pickup-conversion-cta';
 import { COPY } from '@/lib/copy';
+import { withPickupCopyLinks } from '@/lib/pickup-maps-link';
 import { getPublishedProductBySlug, PUBLISHED_PRODUCTS } from '@/lib/products';
 import AddToCartButton from './add-to-cart-button';
 
@@ -73,16 +75,19 @@ export default async function ProductPage({ params }: Props) {
               {COPY.accessoryPageShipNote}
             </p>
           ) : (
-            <p className="text-sm text-zinc-500 mt-5">
-              {product.kind === 'honey' ? COPY.honeyShipNote : COPY.otherShipNote}
-            </p>
+            <>
+              <p className="text-sm text-zinc-600 mt-5 leading-relaxed">
+                {withPickupCopyLinks(product.kind === 'honey' ? COPY.honeyShipNote : COPY.otherShipNote)}
+              </p>
+              <PickupConversionCta compact className="mt-4" />
+            </>
           )}
           <div className="mt-8">
             <AddToCartButton product={product} />
           </div>
           <p className="text-xs text-zinc-500 mt-4">
             {accessory
-              ? 'Questions about honey pickup still go to johnabiddle@gmail.com / 540-400-4586. This lid ships from a supplier, not from the house.'
+              ? withPickupCopyLinks('Questions about honey pickup still go to johnabiddle@gmail.com / 540-400-4586. This lid ships from a supplier, not from the house.')
               : COPY.giftSetNote}
           </p>
         </div>

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { COPY } from '@/lib/copy';
 import { lineFulfillmentLabel, planFulfillment } from '@/lib/fulfillment';
-import { withPickupMapsLink } from '@/lib/pickup-maps-link';
+import { withPickupCopyLinks } from '@/lib/pickup-maps-link';
 import { isPurchasable, withCatalogFields } from '@/lib/products';
 
 interface CartItem {
@@ -110,7 +110,7 @@ export default function CartPage() {
       </Link>
 
       <p className="text-center text-xs text-zinc-500 mt-4">{COPY.giftSetNote}</p>
-      <p className="text-center text-xs text-zinc-500 mt-2">{withPickupMapsLink(COPY.cartPageNote)}</p>
+      <p className="text-center text-xs text-zinc-500 mt-2">{withPickupCopyLinks(COPY.cartPageNote)}</p>
     </div>
   );
 }

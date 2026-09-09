@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { Resend } from 'resend';
-import { CONTACT_EMAIL, CONTACT_PHONE } from '@/lib/copy';
+import { CONTACT_EMAIL, CONTACT_PHONE, COPY } from '@/lib/copy';
 import { formatAddress, fulfillmentCustomerText, planFromMetadata } from '@/lib/fulfillment';
 import { htmlWithPickupCopyLinks } from '@/lib/pickup-maps-link';
 
@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
           <h1 style="color: #111;">Hiveborn Order Confirmation</h1>
           <p>Hi ${customerName},</p>
           <p>Thank you for your order! Your payment has been confirmed.</p>
-          ${plan.isSplitFulfillment ? `<p style="background:#fffbeb;border:1px solid #f59e0b;padding:12px;border-radius:12px;"><strong>Split fulfillment:</strong> honey / house items are pickup at the house (email to schedule). Kitchen add-ons ship separately via supplier dropship.</p>` : ''}
+          ${plan.isSplitFulfillment ? `<p style="background:#fffbeb;border:1px solid #f59e0b;padding:12px;border-radius:12px;"><strong>Split fulfillment:</strong> ${COPY.webhookSplitBanner}</p>` : ''}
           
           <h2 style="margin-top: 24px; font-size: 18px;">Order Details</h2>
           <pre style="background: #f5f5f5; padding: 16px; border-radius: 8px; white-space: pre-wrap;">${items}</pre>

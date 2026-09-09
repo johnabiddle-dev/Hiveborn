@@ -14,9 +14,10 @@ import {
   productShipNote,
   withCatalogFields,
 } from '@/lib/products';
-import { CONTACT_EMAIL, COPY, PICKUP_ADDRESS, PICKUP_MAPS_NOTE } from '@/lib/copy';
+import { PickupConversionCta } from '@/app/pickup-conversion-cta';
+import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_TEL, COPY, PICKUP_ADDRESS, PICKUP_MAPS_NOTE } from '@/lib/copy';
 import { lineFulfillmentLabel, planFulfillment } from '@/lib/fulfillment';
-import { withPickupMapsLink } from '@/lib/pickup-maps-link';
+import { withPickupCopyLinks, withPickupMapsLink } from '@/lib/pickup-maps-link';
 
 interface CartItem extends Product {
   quantity: number;
@@ -69,7 +70,7 @@ function ProductCard({
             ${(product.price / 100).toFixed(2)}
           </p>
           <p className="text-sm text-zinc-600 mt-3 leading-relaxed">{product.description}</p>
-          <p className="text-xs text-zinc-500 mt-3">{productShipNote(product.id)}</p>
+          <p className="text-xs text-zinc-500 mt-3">{withPickupCopyLinks(productShipNote(product.id))}</p>
         </div>
         {product.inStock ? (
           <button
@@ -170,9 +171,9 @@ export default function HivebornShop() {
           >
             Shop Now
           </a>
-          <p className="text-sm text-zinc-700 mt-3 max-w-sm mx-auto">
-            {COPY.heroPickup}
-          </p>
+          <div className="mt-5 max-w-lg mx-auto text-left">
+            <PickupConversionCta />
+          </div>
         </div>
       </div>
 
@@ -180,17 +181,22 @@ export default function HivebornShop() {
       <div className="max-w-2xl mx-auto px-6 py-10 sm:py-12 text-sm sm:text-base text-zinc-700 leading-relaxed">
         <h2 className="text-xl font-semibold tracking-tight text-black mb-3">About the farm</h2>
         <p>
-          We keep bees in New Market, Virginia, and harvest by hand. The honey is raw and unfiltered. Hive Fresh honey is sold as a gift set: mason jar of honey, gift bag, and wooden dipper. Reaper Infused Hot Honey is our spicy jar. Order online, then email {CONTACT_EMAIL} to schedule pickup at the house at {PICKUP_ADDRESS}. Hours vary; email first. When you pick up you can see the bees that made it. {withPickupMapsLink(PICKUP_MAPS_NOTE)} Honey orders ship inside Virginia only. Summer Lotion and Honey Dippers ship continental US. Questions:{' '}
-          <a href={`mailto:${CONTACT_EMAIL}`} className="underline">{CONTACT_EMAIL}</a>.
+          We keep bees in New Market, Virginia, and harvest by hand. The honey is raw and unfiltered. Hive Fresh honey is sold as a gift set: mason jar of honey, gift bag, and wooden dipper. Reaper Infused Hot Honey is our spicy jar. Order online, then {withPickupCopyLinks(`text ${CONTACT_PHONE} or email ${CONTACT_EMAIL}`)} to schedule pickup at the house at {PICKUP_ADDRESS}. Hours vary; text or email first. When you pick up you can see the bees that made it. {withPickupMapsLink(PICKUP_MAPS_NOTE)} Honey orders ship inside Virginia only. Summer Lotion and Honey Dippers ship continental US. Questions:{' '}
+          <a href={`mailto:${CONTACT_EMAIL}`} className="underline">{CONTACT_EMAIL}</a>
+          {' or text '}
+          <a href={`tel:${CONTACT_PHONE_TEL}`} className="underline">{CONTACT_PHONE}</a>.
         </p>
       </div>
 
       {/* Products */}
       <div id="products" className="max-w-6xl mx-auto px-6 pb-16">
         <h2 className="text-4xl font-semibold tracking-tighter mb-2 text-center">Our Products</h2>
-        <p className="text-center text-zinc-600 mb-12 max-w-md mx-auto">
+        <p className="text-center text-zinc-600 mb-6 max-w-md mx-auto">
           Carefully crafted from the hive. {COPY.giftSetNote}
         </p>
+        <div className="max-w-lg mx-auto mb-10">
+          <PickupConversionCta compact />
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {HONEY_PRODUCTS.map((product) => (
@@ -290,7 +296,7 @@ export default function HivebornShop() {
                   >
                     Proceed to Checkout
                   </Link>
-                  <p className="text-[10px] text-center text-zinc-500 mt-3">{COPY.cartDrawerNote}</p>
+                  <p className="text-[10px] text-center text-zinc-500 mt-3">{withPickupCopyLinks(COPY.cartDrawerNote)}</p>
                 </div>
               </>
             )}
@@ -303,7 +309,7 @@ export default function HivebornShop() {
         <div className="grid md:grid-cols-3 gap-8">
           <div>
             <div className="font-medium text-black mb-1">Pickup & shipping</div>
-            <p>{withPickupMapsLink(COPY.pickupShippingBlurb)}</p>
+            <p>{withPickupCopyLinks(COPY.pickupShippingBlurb)}</p>
           </div>
           <div>
             <div className="font-medium text-black mb-1">Satisfaction guaranteed</div>
@@ -311,7 +317,12 @@ export default function HivebornShop() {
           </div>
           <div>
             <div className="font-medium text-black mb-1">Questions?</div>
-            <p>Email us at <a href={`mailto:${CONTACT_EMAIL}`} className="underline">{CONTACT_EMAIL}</a> — we reply fast.</p>
+            <p>
+              Text <a href={`tel:${CONTACT_PHONE_TEL}`} className="underline">{CONTACT_PHONE}</a>
+              {' or email '}
+              <a href={`mailto:${CONTACT_EMAIL}`} className="underline">{CONTACT_EMAIL}</a>
+              {' — we reply fast.'}
+            </p>
           </div>
         </div>
       </div>

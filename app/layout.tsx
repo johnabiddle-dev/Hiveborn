@@ -3,7 +3,8 @@ import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
-import { CONTACT_EMAIL, COPY } from "@/lib/copy";
+import { StickyMobilePickupBar } from "@/app/pickup-conversion-cta";
+import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_TEL, COPY } from "@/lib/copy";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,7 +34,7 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-white text-zinc-950">
+      <body className="min-h-full flex flex-col bg-white text-zinc-950 pb-12 md:pb-0">
         <nav className="border-b">
           <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2 min-w-0">
@@ -56,10 +57,13 @@ export default function RootLayout({
         </nav>
         {children}
         <Analytics />
+        <StickyMobilePickupBar />
         <footer className="border-t mt-auto py-8 text-xs text-zinc-500">
           <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
               {COPY.footerPickup}{' '}
+              <a href={`tel:${CONTACT_PHONE_TEL}`} className="hover:underline">{CONTACT_PHONE}</a>
+              {' · '}
               <a href={`mailto:${CONTACT_EMAIL}`} className="hover:underline">{CONTACT_EMAIL}</a>
               <div className="mt-1">{COPY.footerHoney}</div>
             </div>

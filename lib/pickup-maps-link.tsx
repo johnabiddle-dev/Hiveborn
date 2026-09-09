@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { CONTACT_EMAIL, CONTACT_PHONE, PICKUP_MAPS_PIN } from '@/lib/copy';
+import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_TEL, PICKUP_MAPS_PIN } from '@/lib/copy';
 
 function escapeRegExp(value: string) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -37,7 +37,7 @@ export function htmlWithPickupMapsLink(text: string): string {
 
 export function ContactPhoneLink({ className = 'underline' }: { className?: string }) {
   return (
-    <a href={`tel:${CONTACT_PHONE}`} className={className}>
+    <a href={`tel:${CONTACT_PHONE_TEL}`} className={className}>
       {CONTACT_PHONE}
     </a>
   );
@@ -75,5 +75,5 @@ export function htmlWithPickupCopyLinks(text: string): string {
     .split(CONTACT_EMAIL)
     .join(`<a href="mailto:${CONTACT_EMAIL}">${CONTACT_EMAIL}</a>`)
     .split(CONTACT_PHONE)
-    .join(`<a href="tel:${CONTACT_PHONE}">${CONTACT_PHONE}</a>`);
+    .join(`<a href="tel:${CONTACT_PHONE_TEL}">${CONTACT_PHONE}</a>`);
 }

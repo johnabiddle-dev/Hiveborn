@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { calculateShippingCents } from '@/lib/checkout';
-import { CONTACT_EMAIL, COPY } from '@/lib/copy';
+import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_TEL, COPY } from '@/lib/copy';
 import {
   checkoutShippingLabel,
   lineFulfillmentLabel,
@@ -11,7 +11,7 @@ import {
   validateShipDestination,
 } from '@/lib/fulfillment';
 import { isPurchasable, withCatalogFields } from '@/lib/products';
-import { withPickupCopyLinks, withPickupMapsLink } from '@/lib/pickup-maps-link';
+import { withPickupCopyLinks } from '@/lib/pickup-maps-link';
 import { US_STATES } from '@/lib/us-states';
 
 interface CartItem {
@@ -146,7 +146,7 @@ export default function Checkout() {
   return (
     <div className="max-w-2xl mx-auto px-6 py-12">
       <h1 className="text-4xl font-semibold tracking-tighter mb-2">Checkout</h1>
-      <p className="text-sm text-zinc-600 mb-2">{COPY.checkoutIntro}</p>
+      <p className="text-sm text-zinc-600 mb-2">{withPickupCopyLinks(COPY.checkoutIntro)}</p>
       <p className="text-sm text-zinc-600 mb-8">{COPY.giftSetNote}</p>
 
       {plan.isSplitFulfillment && (
@@ -203,7 +203,7 @@ export default function Checkout() {
             />
             <span>
               <span className="font-semibold text-black">{COPY.checkoutPickupLabel}</span>
-              <span className="block text-zinc-600 mt-0.5">{withPickupMapsLink(COPY.checkoutPickupHint)}</span>
+              <span className="block text-zinc-600 mt-0.5">{withPickupCopyLinks(COPY.checkoutPickupHint)}</span>
               <span className="block text-zinc-600 mt-0.5">
                 {plan.honeyForcedPickup || plan.hasAccessoryItems
                   ? COPY.checkoutPickupWithAccessories
@@ -312,15 +312,19 @@ export default function Checkout() {
       </button>
 
       <p className="text-xs text-center text-zinc-500 mt-4">
-        {plan.isSplitFulfillment
-          ? COPY.checkoutSplitFooter
-          : plan.shippingLineCount === 0
-            ? COPY.checkoutPickupFooter
-            : COPY.checkoutShipFooter}
+        {withPickupCopyLinks(
+          plan.isSplitFulfillment
+            ? COPY.checkoutSplitFooter
+            : plan.shippingLineCount === 0
+              ? COPY.checkoutPickupFooter
+              : COPY.checkoutShipFooter
+        )}
       </p>
       {plan.honeyHousePickup && (
         <p className="text-xs text-center text-zinc-500 mt-2">
           {withPickupCopyLinks(COPY.checkoutPickupAfterPay)} Questions:{' '}
+          <a href={`tel:${CONTACT_PHONE_TEL}`} className="underline">{CONTACT_PHONE}</a>
+          {' or '}
           <a href={`mailto:${CONTACT_EMAIL}`} className="underline">{CONTACT_EMAIL}</a>.
         </p>
       )}

@@ -20,7 +20,7 @@ export interface Product {
   published?: boolean;
 }
 
-export const HONEY_PRODUCT_IDS = [2, 3, 4]; // Honey 1/2 pint, pint jar 20 oz, Reaper Infused Hot Honey 1/2 pint
+export const HONEY_PRODUCT_IDS = [2, 3, 4, 8]; // 10 oz gift set, 20 oz gift set, Reaper Infused Hot Honey 1/2 pint, 6 oz hex gift set
 export const ACCESSORY_PRODUCT_IDS = [6, 7];
 export const FEATURED_PRODUCT_ID = 4;
 
@@ -41,7 +41,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 2,
     slug: 'hive-fresh-honey-gift-set-half-pint',
-    name: 'Hive Fresh Honey Gift Set — half-pint jar (8 oz mason, 10 oz by weight)',
+    name: 'Hive Fresh Honey 10 oz Gift Set — half-pint mason jar',
     price: 1500,
     description:
       'Gift set: an 8 oz mason jar filled with 10 oz of honey by weight, packed in a gift bag with a wooden dipper. Fresh, hand-harvested from the hive.',
@@ -54,12 +54,25 @@ export const PRODUCTS: Product[] = [
   {
     id: 3,
     slug: 'hive-fresh-honey-gift-set-pint',
-    name: 'Hive Fresh Honey Gift Set — pint jar (16 oz mason, 20 oz by weight)',
+    name: 'Hive Fresh Honey 20 oz Gift Set — pint mason jar',
     price: 2500,
     description:
       'Gift set: a 16 oz mason jar filled with 20 oz of honey by weight, packed in a gift bag with a wooden dipper. Fresh, hand-harvested from the hive.',
     image: '/images/hero-pint-web.jpg',
     cardImage: '/images/hero-pint-square.jpg',
+    inStock: true,
+    kind: 'honey',
+    fulfillment: 'pickup_or_va_ship',
+  },
+  {
+    id: 8,
+    slug: 'hive-fresh-honey-6oz-hex-gift-set',
+    name: 'Hive Fresh Honey 6 oz Hex Gift Set',
+    price: 1200,
+    description:
+      'Gift set: a 6 oz hexagonal glass jar of honey with a gold lid and gold bee decal, plus a wooden dipper, in a gold organza drawstring bag. Small batch — only 12 made. Fresh, hand-harvested from the hive.',
+    image: '/images/hero-6oz-hex-web.jpg',
+    cardImage: '/images/hero-6oz-hex-square.jpg',
     inStock: true,
     kind: 'honey',
     fulfillment: 'pickup_or_va_ship',

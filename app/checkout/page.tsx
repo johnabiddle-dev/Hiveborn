@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { track } from '@vercel/analytics';
 import { calculateShippingCents } from '@/lib/checkout';
 import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_TEL, COPY } from '@/lib/copy';
 import {
@@ -97,6 +98,10 @@ export default function Checkout() {
       alert(destination.reason === 'honey_outside_va' ? COPY.honeyOutsideVaAlert : COPY.continentalOnly);
       return;
     }
+
+    track('checkout_start', {
+      cartValue: productsTotalCents / 100,
+    });
 
     setIsLoading(true);
 

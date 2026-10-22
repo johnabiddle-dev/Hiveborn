@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { track } from '@vercel/analytics';
 import { ShoppingCart, Plus, X } from 'lucide-react';
 import {
   ACCESSORY_PRODUCTS,
@@ -115,6 +116,11 @@ export default function HivebornShop() {
 
   const addToCart = (product: Product) => {
     if (!product.inStock) return;
+    track('add_to_cart', {
+      productName: product.name,
+      price: product.price / 100,
+      productId: product.id,
+    });
     setCart((current) => {
       const existing = current.find((item) => item.id === product.id);
       if (existing) {

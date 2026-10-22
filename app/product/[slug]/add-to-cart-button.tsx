@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { track } from '@vercel/analytics';
 import { Plus } from 'lucide-react';
 import { COPY } from '@/lib/copy';
 import { isPurchasable, type Product } from '@/lib/products';
@@ -24,6 +25,11 @@ export default function AddToCartButton({ product }: { product: Product }) {
   }
 
   const addToCart = () => {
+    track('add_to_cart', {
+      productName: product.name,
+      price: product.price / 100,
+      productId: product.id,
+    });
     const saved = localStorage.getItem('hiveborn-cart');
     const cart = saved ? (JSON.parse(saved) as Array<Product & { quantity: number }>) : [];
     const existing = cart.find((item) => item.id === product.id);

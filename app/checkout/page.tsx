@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { track } from '@vercel/analytics';
-import { calculateShippingCents } from '@/lib/checkout';
+import { calculateDropshipCents } from '@/lib/checkout';
 import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_TEL, COPY } from '@/lib/copy';
 import {
   checkoutShippingLabel,
@@ -14,6 +14,7 @@ import {
 import { isPurchasable, withCatalogFields } from '@/lib/products';
 import { withPickupCopyLinks } from '@/lib/pickup-maps-link';
 import { US_STATES } from '@/lib/us-states';
+import { formatCents, shippingQuotes } from '@/lib/shipping';
 
 interface CartItem {
   id: number;
@@ -41,12 +42,19 @@ export default function Checkout() {
   const router = useRouter();
 
   const plan = planFulfillment(cart, isPickup);
-  const shippingCostCents = calculateShippingCents(plan.shippingLineCount);
   const productsTotalCents = cart.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
+  // Preview only — the server recomputes everything. Hiveborn shipping is chosen on
+  // the Stripe page (USPS Ground Advantage default, or Priority Mail) by jar count.
+  const quotes = shippingQuotes(plan.shippedJarCount, productsTotalCents);
+  const groundQuote = quotes.find((q) => q.method === 'usps_ground_advantage');
+  const priorityQuote = quotes.find((q) => q.method === 'usps_priority_mail');
+  const dropshipCents = calculateDropshipCents(plan.accessoryLineCount);
+  const shippingCostCents = (groundQuote?.amountCents ?? 0) + dropshipCents;
   const grandTotalCents = productsTotalCents + shippingCostCents;
+  const hiveShips = plan.shippedJarCount > 0;
   const destination = validateShipDestination(plan, shipping.state);
   const honeyBlocked = !destination.ok && destination.reason === 'honey_outside_va';
   const continentalBlocked = !destination.ok && destination.reason === 'non_continental';
@@ -139,8 +147,8 @@ export default function Checkout() {
   }
 
   const payLabel = plan.shippingLineCount === 0
-    ? `Pay $${(grandTotalCents / 100).toFixed(2)} — apiary pickup`
-    : `Pay $${(grandTotalCents / 100).toFixed(2)} with Stripe`;
+    ? `Pay $${(grandTotalCents / 100).toFixed(2)} — free pickup`
+    : `Continue to secure payment — $${(grandTotalCents / 100).toFixed(2)}`;
 
   const addressHeading = plan.isSplitFulfillment
     ? COPY.checkoutAddressSplit
@@ -184,10 +192,26 @@ export default function Checkout() {
           <div>Products</div>
           <div>${(productsTotalCents / 100).toFixed(2)}</div>
         </div>
-        <div className="flex justify-between text-sm">
-          <div>{checkoutShippingLabel(plan)}</div>
-          <div>${(shippingCostCents / 100).toFixed(2)}</div>
-        </div>
+        {hiveShips && groundQuote && priorityQuote ? (
+          <div className="text-sm py-1">
+            <div className="flex justify-between">
+              <div>
+                Shipping — USPS Ground Advantage ({plan.shippedJarCount} jar{plan.shippedJarCount === 1 ? '' : 's'})
+              </div>
+              <div>{groundQuote.amountCents === 0 ? 'Free' : formatCents(groundQuote.amountCents)}</div>
+            </div>
+            <div className="text-xs text-zinc-500 mt-0.5">
+              Or USPS Priority Mail for {formatCents(priorityQuote.amountCents)}. Choose on the secure Stripe page.
+              {groundQuote.amountCents === 0 ? ' Ground Advantage is free on orders $100+.' : ''}
+            </div>
+          </div>
+        ) : null}
+        {(!hiveShips || dropshipCents > 0) && (
+          <div className="flex justify-between text-sm">
+            <div>{checkoutShippingLabel(plan)}</div>
+            <div>${((hiveShips ? dropshipCents : shippingCostCents) / 100).toFixed(2)}</div>
+          </div>
+        )}
         <div className="flex justify-between font-semibold text-lg pt-4 border-t">
           <div>{plan.shippingLineCount === 0 ? COPY.checkoutPickupTotal : 'Total'}</div>
           <div>${(grandTotalCents / 100).toFixed(2)}</div>

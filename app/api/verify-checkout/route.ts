@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     }
 
     const session = await stripe.checkout.sessions.retrieve(sessionId, {
-      expand: ['line_items'],
+      expand: ['line_items', 'shipping_cost.shipping_rate'],
     });
 
     // Only consider it successful if payment is complete
@@ -57,6 +57,11 @@ export async function POST(request: NextRequest) {
       plan,
       shippingAddress,
       items,
+      shippingMethod:
+        session.shipping_cost?.shipping_rate && typeof session.shipping_cost.shipping_rate === 'object'
+          ? session.shipping_cost.shipping_rate.display_name || null
+          : null,
+      shippingAmount: session.shipping_cost?.amount_total ?? 0,
       customerEmail: session.customer_details?.email || null,
       customerName: session.customer_details?.name || metadata.shippingName || null,
     });

@@ -16,9 +16,9 @@ import {
   withCatalogFields,
 } from '@/lib/products';
 import { PickupConversionCta } from '@/app/pickup-conversion-cta';
-import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_TEL, COPY, PICKUP_ADDRESS, PICKUP_MAPS_NOTE } from '@/lib/copy';
+import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_TEL, COPY, PICKUP_LOCATION, PICKUP_OR_SHIP_TAGLINE, PICKUP_TEXT_NOTE } from '@/lib/copy';
 import { lineFulfillmentLabel, planFulfillment } from '@/lib/fulfillment';
-import { withPickupCopyLinks, withPickupMapsLink } from '@/lib/pickup-maps-link';
+import { withPickupCopyLinks } from '@/lib/pickup-maps-link';
 
 interface CartItem extends Product {
   quantity: number;
@@ -187,7 +187,7 @@ export default function HivebornShop() {
       <div className="max-w-2xl mx-auto px-6 py-10 sm:py-12 text-sm sm:text-base text-zinc-700 leading-relaxed">
         <h2 className="text-xl font-semibold tracking-tight text-black mb-3">About the farm</h2>
         <p>
-          We keep bees in New Market, Virginia, and harvest by hand. The honey is raw and unfiltered. Hive Fresh honey is sold as a gift set: mason jar of honey, gift bag, and wooden dipper. Reaper Infused Hot Honey is our spicy jar. Order online, then {withPickupCopyLinks(`text ${CONTACT_PHONE} or email ${CONTACT_EMAIL}`)} to schedule pickup at the house at {PICKUP_ADDRESS}. Hours vary; text or email first. When you pick up you can see the bees that made it. {withPickupMapsLink(PICKUP_MAPS_NOTE)} Honey orders ship inside Virginia only. Summer Lotion and Honey Dippers ship continental US. Questions:{' '}
+          We keep bees in New Market, Virginia, and harvest by hand. The honey is raw and unfiltered. Hive Fresh honey is sold as a gift set: mason jar of honey, gift bag, and wooden dipper. Reaper Infused Hot Honey is our spicy jar. {PICKUP_OR_SHIP_TAGLINE} Pickup in {PICKUP_LOCATION} is free. {PICKUP_TEXT_NOTE} Honey orders ship inside Virginia only. Summer Lotion and Honey Dippers ship continental US. Questions:{' '}
           <a href={`mailto:${CONTACT_EMAIL}`} className="underline">{CONTACT_EMAIL}</a>
           {' or text '}
           <a href={`tel:${CONTACT_PHONE_TEL}`} className="underline">{CONTACT_PHONE}</a>.

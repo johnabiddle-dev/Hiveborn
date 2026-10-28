@@ -29,11 +29,20 @@ export interface FulfillmentPlan {
   houseShips: boolean;
   accessoriesShip: boolean;
   isSplitFulfillment: boolean;
+  /** Distinct line items that ship (kept for metadata compatibility). */
   shippingLineCount: number;
+  /**
+   * Total jars/units Hiveborn ships itself: the SUM OF QUANTITIES of honey + house
+   * items when they ship (0 for pickup). Shipping is priced from this, not from
+   * the number of distinct products.
+   */
+  shippedJarCount: number;
+  /** Distinct kitchen add-on (supplier dropship) lines. */
+  accessoryLineCount: number;
 }
 
 export function planFulfillment(
-  items: Array<{ id: number }>,
+  items: Array<{ id: number; quantity?: number }>,
   requestedPickup: boolean
 ): FulfillmentPlan {
   const hasHoneyItems = items.some((item) => isHoneyProduct(item.id));
@@ -50,6 +59,14 @@ export function planFulfillment(
     if (isHoneyProduct(item.id) || isHouseProduct(item.id)) return !honeyHousePickup;
     return false;
   }).length;
+  const shippedJarCount = honeyHousePickup
+    ? 0
+    : items.reduce((sum, item) => {
+        if (!isHoneyProduct(item.id) && !isHouseProduct(item.id)) return sum;
+        const qty = Number(item.quantity ?? 1);
+        return sum + (Number.isFinite(qty) && qty > 0 ? Math.floor(qty) : 0);
+      }, 0);
+  const accessoryLineCount = items.filter((item) => isAccessoryProduct(item.id)).length;
 
   return {
     hasHoneyItems,
@@ -63,6 +80,8 @@ export function planFulfillment(
     accessoriesShip,
     isSplitFulfillment: honeyHousePickup && hasAccessoryItems,
     shippingLineCount,
+    shippedJarCount,
+    accessoryLineCount,
   };
 }
 
@@ -83,20 +102,16 @@ export function validateShipDestination(
   return { ok: true };
 }
 
+/** Description for the kitchen add-on (supplier dropship) line item. Hiveborn's own
+ * shipping is charged via Stripe Checkout shipping_options, not a line item. */
 export function shippingLineDescription(plan: FulfillmentPlan): string {
   if (plan.isSplitFulfillment) {
     return 'Kitchen add-on shipping — supplier dropships separately from honey/house pickup';
   }
-  if (plan.accessoriesShip && (plan.honeyShips || plan.houseShips)) {
-    return 'Hiveborn shipping plus kitchen add-on supplier dropship';
+  if (plan.honeyShips || plan.houseShips) {
+    return 'Kitchen add-on shipping — supplier dropships separately from Hiveborn items';
   }
-  if (plan.accessoriesShip) {
-    return 'Kitchen add-on shipping — supplier dropships to your address';
-  }
-  if (plan.honeyShips) {
-    return 'Honey products — ships to Virginia only';
-  }
-  return 'Standard shipping to continental US (Summer Lotion & Dipper)';
+  return 'Kitchen add-on shipping — supplier dropships to your address';
 }
 
 export function checkoutShippingLabel(plan: FulfillmentPlan): string {
@@ -127,7 +142,11 @@ export function formatAddress(address: {
   return [address.name, address.address, line2].filter(Boolean).join('\n');
 }
 
-export function fulfillmentCustomerText(plan: FulfillmentPlan, addressText: string): string {
+export function fulfillmentCustomerText(
+  plan: FulfillmentPlan,
+  addressText: string,
+  shippingMethodName?: string
+): string {
   const parts: string[] = [];
   if (plan.isSplitFulfillment) {
     parts.push(COPY.splitFulfillmentHeadline);
@@ -136,7 +155,11 @@ export function fulfillmentCustomerText(plan: FulfillmentPlan, addressText: stri
     parts.push(COPY.webhookPickup);
   }
   if (plan.honeyShips || plan.houseShips) {
-    parts.push(`Hiveborn ships to:\n${addressText}`);
+    parts.push(
+      shippingMethodName
+        ? `Hiveborn ships via ${shippingMethodName} to:\n${addressText}`
+        : `Hiveborn ships to:\n${addressText}`
+    );
   }
   if (plan.accessoriesShip) {
     parts.push(`${COPY.webhookDropship}\n${addressText}`);
@@ -183,6 +206,8 @@ export function serializeFulfillmentMetadata(plan: FulfillmentPlan): Record<stri
     honeyShips: String(plan.honeyShips),
     houseShips: String(plan.houseShips),
     shippingLineCount: String(plan.shippingLineCount),
+    shippedJarCount: String(plan.shippedJarCount),
+    accessoryLineCount: String(plan.accessoryLineCount),
   };
 }
 
@@ -204,5 +229,7 @@ export function planFromMetadata(metadata: Record<string, string> | null | undef
     accessoriesShip: m.accessoriesShip === 'true' || hasAccessoryItems,
     isSplitFulfillment: m.isSplitFulfillment === 'true',
     shippingLineCount: Number(m.shippingLineCount) || 0,
+    shippedJarCount: Number(m.shippedJarCount) || 0,
+    accessoryLineCount: Number(m.accessoryLineCount) || 0,
   };
 }

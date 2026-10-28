@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { calculateShippingCents, resolveCartItems } from './checkout';
+import { calculateDropshipCents, resolveCartItems } from './checkout';
 import {
   planFulfillment,
   serializeFulfillmentMetadata,
@@ -14,7 +14,8 @@ test('honey-only pickup has no shipping', () => {
   assert.equal(plan.accessoriesShip, false);
   assert.equal(plan.isSplitFulfillment, false);
   assert.equal(plan.shippingLineCount, 0);
-  assert.equal(calculateShippingCents(plan.shippingLineCount), 0);
+  assert.equal(plan.shippedJarCount, 0);
+  assert.equal(calculateDropshipCents(plan.accessoryLineCount), 0);
 });
 
 test('accessory-only cart cannot pickup and always ships', () => {
@@ -23,7 +24,7 @@ test('accessory-only cart cannot pickup and always ships', () => {
   assert.equal(plan.honeyHousePickup, false);
   assert.equal(plan.accessoriesShip, true);
   assert.equal(plan.shippingLineCount, 1);
-  assert.equal(calculateShippingCents(plan.shippingLineCount), 1100);
+  assert.equal(calculateDropshipCents(plan.accessoryLineCount), 1100);
 });
 
 test('mixed cart splits honey pickup and accessory dropship', () => {
@@ -33,7 +34,7 @@ test('mixed cart splits honey pickup and accessory dropship', () => {
   assert.equal(plan.honeyShips, false);
   assert.equal(plan.accessoriesShip, true);
   assert.equal(plan.shippingLineCount, 1);
-  assert.equal(calculateShippingCents(plan.shippingLineCount), 1100);
+  assert.equal(calculateDropshipCents(plan.accessoryLineCount), 1100);
   assert.equal(validateShipDestination(plan, 'CA').ok, true);
 });
 
@@ -88,4 +89,22 @@ test('metadata round-trips split fulfillment', () => {
   assert.equal(restored.isSplitFulfillment, true);
   assert.equal(restored.hasAccessoryItems, true);
   assert.equal(restored.honeyHousePickup, true);
+});
+
+test('jar count is the sum of quantities, not distinct products', () => {
+  const plan = planFulfillment([{ id: 3, quantity: 6 }], false);
+  assert.equal(plan.shippingLineCount, 1);
+  assert.equal(plan.shippedJarCount, 6);
+  const mixed = planFulfillment([{ id: 3, quantity: 2 }, { id: 2, quantity: 1 }, { id: 8, quantity: 1 }], false);
+  assert.equal(mixed.shippedJarCount, 4);
+});
+
+test('pickup ships zero jars', () => {
+  const plan = planFulfillment([{ id: 3, quantity: 6 }], true);
+  assert.equal(plan.shippedJarCount, 0);
+});
+
+test('metadata round-trips jar count', () => {
+  const plan = planFulfillment([{ id: 3, quantity: 3 }], false);
+  assert.equal(planFromMetadata(serializeFulfillmentMetadata(plan)).shippedJarCount, 3);
 });

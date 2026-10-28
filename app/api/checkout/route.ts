@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import { calculateShippingCents, resolveCartItems, toStripeLineItems } from '@/lib/checkout';
+import { calculateDropshipCents, resolveCartItems, subtotalCents, toStripeLineItems } from '@/lib/checkout';
 import {
   formatAddress,
   serializeFulfillmentMetadata,
   shippingLineDescription,
   validateShipDestination,
 } from '@/lib/fulfillment';
+import { buildStripeShippingOptions } from '@/lib/shipping';
 
 export async function POST(request: NextRequest) {
   try {
@@ -31,26 +32,39 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: destination.error }, { status: 400 });
     }
 
-    // Calculate shipping (server authoritative). The client-provided shipping cost
-    // is intentionally ignored so it cannot be reduced to zero via tampering.
-    // Pickup honey/house items do not count; dropship accessories always do.
-    const shippingCost = calculateShippingCents(plan.shippingLineCount);
+    // Shipping is server authoritative. The client-provided shipping cost is
+    // intentionally ignored so it cannot be reduced to zero via tampering.
+    //
+    // Hiveborn items (honey + house) are priced by TOTAL JAR COUNT (sum of
+    // quantities) via Stripe Checkout shipping_options: free pickup in New Market
+    // (default), or USPS Ground Advantage / USPS Priority Mail. Honey still ships
+    // to Virginia only (validated above).
+    const productSubtotalCents = subtotalCents(resolvedItems);
+    // Accessory-only carts (no Hiveborn items) get no shipping_options; their
+    // dropship charge is the separate line item below.
+    const shippingOptions =
+      plan.pickupEligible
+        ? buildStripeShippingOptions({
+            pickup: plan.honeyHousePickup,
+            jars: plan.shippedJarCount,
+            subtotalCents: productSubtotalCents,
+          })
+        : [];
 
     // Convert resolved (server-priced) cart items to Stripe line items
     const lineItems = toStripeLineItems(resolvedItems);
 
-    // Add shipping as a line item only when something actually ships
-    if (plan.shippingLineCount > 0) {
+    // Kitchen add-ons (unpublished) are supplier-dropshipped and keep a separate line item.
+    const dropshipCost = calculateDropshipCents(plan.accessoryLineCount);
+    if (dropshipCost > 0) {
       lineItems.push({
         price_data: {
           currency: 'usd',
           product_data: {
-            name: plan.isSplitFulfillment
-              ? 'Kitchen add-on shipping (supplier dropship)'
-              : 'Shipping',
+            name: 'Kitchen add-on shipping (supplier dropship)',
             description: shippingLineDescription(plan),
           },
-          unit_amount: shippingCost,
+          unit_amount: dropshipCost,
         },
         quantity: 1,
       });
@@ -68,10 +82,14 @@ export async function POST(request: NextRequest) {
       shipping_address_collection: {
         allowed_countries: ['US', 'CA'],
       },
+      // First option is the default: free pickup for pickup orders, USPS Ground
+      // Advantage for shipped orders (Priority Mail offered as the second choice).
+      ...(shippingOptions.length > 0 ? { shipping_options: shippingOptions } : {}),
       metadata: {
         shippingName: shippingAddress?.name || '',
         shippingAddress: JSON.stringify(shippingAddress || {}),
         shipTo: formatAddress(shippingAddress),
+        productSubtotalCents: String(productSubtotalCents),
         ...serializeFulfillmentMetadata(plan),
       },
     });

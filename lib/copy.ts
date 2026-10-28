@@ -1,29 +1,32 @@
 export const CONTACT_EMAIL = 'johnabiddle@gmail.com';
 export const CONTACT_PHONE = '540-400-4586';
 export const CONTACT_PHONE_TEL = '5404004586';
-export const PICKUP_ADDRESS = '93 Runaway Ln, New Market, VA 22844';
-export const PICKUP_STREET = '93 Runaway Ln';
-/** Driveway entrance — Maps often sends the street address to the neighbor on Run Away Ln. */
-export const PICKUP_MAPS_PIN = 'https://www.google.com/maps?q=38.6449831,-78.6259750';
-export const PICKUP_MAPS_NOTE = `Google Maps often routes to the neighbor — use this pin for the driveway entrance: ${PICKUP_MAPS_PIN}.`;
+/**
+ * Public pickup location. The street address is intentionally NOT published
+ * anywhere on the site or in customer emails — John texts it after an order.
+ */
+export const PICKUP_LOCATION = 'New Market, VA';
+export const PICKUP_TEXT_NOTE = "We'll text you the pickup address and time after you order.";
 export const PICKUP_CONTACT = `text ${CONTACT_PHONE} or email ${CONTACT_EMAIL}`;
-export const PICKUP_SCHEDULE_NOTE = `To schedule pickup, ${PICKUP_CONTACT}.`;
+export const PICKUP_SCHEDULE_NOTE = `${PICKUP_TEXT_NOTE} Questions? ${PICKUP_CONTACT}.`;
+/** Approved site line for the product / pickup / checkout area. */
+export const PICKUP_OR_SHIP_TAGLINE =
+  'Pick up at the farm and meet the bees, or have it shipped anywhere in Virginia. Shipping is calculated at checkout.';
 
 /** IG/FB conversion line: text is equal to email. */
-export const CONVERSION_CTA = `Order at hiveborn.com → ${PICKUP_CONTACT} to schedule house pickup (${PICKUP_STREET}).`;
-export const STICKY_MOBILE_CTA = `Order · Text ${CONTACT_PHONE} to schedule pickup`;
+export const CONVERSION_CTA = `Order at hiveborn.com → Pickup in ${PICKUP_LOCATION}. ${PICKUP_TEXT_NOTE} Questions? ${PICKUP_CONTACT}.`;
+export const STICKY_MOBILE_CTA = `Order · Questions? Text ${CONTACT_PHONE}`;
 
-/** Customer-facing pickup + shipping copy. Pickup is order-online, text or email to schedule — hours vary, not walk-in. */
+/** Customer-facing pickup + shipping copy. Pickup is order-online; John texts the address and time after the order — not walk-in. */
 export const COPY = {
   metaTitle: 'Hiveborn — Raw honey from New Market, VA',
-  metaDescription:
-    `Raw, unfiltered honey from New Market, Virginia. Order online, then ${PICKUP_CONTACT} to schedule pickup at the house. Honey ships in Virginia only.`,
+  metaDescription: `Raw, unfiltered honey from New Market, Virginia. ${PICKUP_OR_SHIP_TAGLINE} Questions? ${PICKUP_CONTACT}.`,
   heroSub: 'Raw honey from New Market, Virginia.',
   heroPickup: CONVERSION_CTA,
   conversionCta: CONVERSION_CTA,
   stickyMobileCta: STICKY_MOBILE_CTA,
-  honeyShipNote: `VA shipping, or ${PICKUP_CONTACT} to schedule pickup at the house.`,
-  otherShipNote: `Ships continental US, or ${PICKUP_CONTACT} to schedule pickup at the house.`,
+  honeyShipNote: `${PICKUP_OR_SHIP_TAGLINE} Pickup in ${PICKUP_LOCATION} is free. ${PICKUP_TEXT_NOTE} Questions? ${PICKUP_CONTACT}.`,
+  otherShipNote: `Ships continental US (shipping calculated at checkout), or free pickup in ${PICKUP_LOCATION}. ${PICKUP_TEXT_NOTE} Questions? ${PICKUP_CONTACT}.`,
   accessoryShipNote:
     'Kitchen add-on — not Hiveborn honey. Supplier dropships from overseas (often China). Typical delivery 2–4 weeks. Hiveborn does not inventory or ship this.',
   accessoryPageShipNote:
@@ -31,63 +34,60 @@ export const COPY = {
   kitchenAddOnsHeading: 'Kitchen add-ons',
   kitchenAddOnsIntro:
     'Mason-jar lids and pumps for jars you already own, or as an add-on for our gift jars if the mouth size matches. These are not Hiveborn honey. A supplier dropships them from overseas (often China; typically 2–4 weeks).',
-  cartDrawerNote:
-    `Pickup at the house is free — ${PICKUP_CONTACT} to schedule. Hours vary. Virginia shipping starts at $11.`,
-  pickupMapsNote: PICKUP_MAPS_NOTE,
+  cartDrawerNote: `${PICKUP_OR_SHIP_TAGLINE} Pickup in ${PICKUP_LOCATION} is free. Questions? ${PICKUP_CONTACT}.`,
   pickupScheduleNote: PICKUP_SCHEDULE_NOTE,
-  pickupShippingBlurb: `Order online, then ${PICKUP_CONTACT} to schedule pickup at the house (${PICKUP_ADDRESS}) — free. Hours vary; text or email first. ${PICKUP_MAPS_NOTE} Honey ships in Virginia only. Summer Lotion and Dipper ship continental US.`,
-  footerPickup: 'New Market, VA · Text or email to schedule pickup ·',
+  pickupShippingBlurb: `${PICKUP_OR_SHIP_TAGLINE} Pickup in ${PICKUP_LOCATION} is free. ${PICKUP_TEXT_NOTE} Questions? ${PICKUP_CONTACT}. USPS Ground Advantage starts at $12 and is free on orders $100+; USPS Priority Mail is also available. Honey ships in Virginia only. Summer Lotion and Dipper ship continental US.`,
+  footerPickup: 'Pickup in New Market, VA · Ships anywhere in Virginia · Text or email:',
   footerHoney: 'Honey ships in Virginia only.',
-  cartPageNote: `Order online, then ${PICKUP_CONTACT} to schedule pickup at the house (${PICKUP_ADDRESS}) — free. Hours vary; text or email first. ${PICKUP_MAPS_NOTE} Virginia shipping starts at $11. Honey ships in Virginia only.`,
+  cartPageNote: `${PICKUP_OR_SHIP_TAGLINE} Pickup in ${PICKUP_LOCATION} is free. ${PICKUP_TEXT_NOTE} Questions? ${PICKUP_CONTACT}. Honey ships in Virginia only.`,
   cartSplitNote:
-    'Mixed cart: honey gift sets stay pickup at the house (text or email to schedule). Kitchen add-ons always ship to your address via supplier dropship.',
-  checkoutIntro: `Order online, then ${PICKUP_CONTACT} to schedule pickup at the house (${PICKUP_ADDRESS}). Hours vary; text or email first. Honey ships in Virginia; lotion and dippers ship continental US.`,
-  checkoutPickupLabel: 'Pickup honey / house items at the house — free. Text or email to schedule.',
-  checkoutPickupHint: `Pickup is at ${PICKUP_ADDRESS}. Hours vary — ${PICKUP_CONTACT} to schedule. When you pick up you can see the bees that made it. ${PICKUP_MAPS_NOTE}`,
-  checkoutUncheck: 'Uncheck only if you need Hiveborn to ship honey or house items.',
+    'Mixed cart: honey gift sets stay pickup in New Market, VA (we’ll text you the address and time). Kitchen add-ons always ship to your address via supplier dropship.',
+  checkoutIntro: `${PICKUP_OR_SHIP_TAGLINE} Questions? ${PICKUP_CONTACT}. Honey ships in Virginia; lotion and dippers ship continental US.`,
+  checkoutPickupLabel: `Free pickup in ${PICKUP_LOCATION} — come meet the bees.`,
+  checkoutPickupHint: `${PICKUP_TEXT_NOTE} Questions? ${PICKUP_CONTACT}.`,
+  checkoutUncheck: 'Uncheck to have it shipped. You’ll choose USPS Ground Advantage or Priority Mail on the secure Stripe page.',
   checkoutPickupWithAccessories:
     'Honey gift sets in a mixed cart stay pickup-only. Kitchen add-ons still ship to the address below via supplier dropship.',
-  checkoutPickupLine: 'Pickup at the house (free)',
-  checkoutShippingHoney: 'Virginia shipping starts at $11',
-  checkoutShippingOther: 'Shipping starts at $11',
-  checkoutShippingAccessory: 'Kitchen add-on shipping (supplier dropship) starts at $11',
-  checkoutShippingSplit: 'Kitchen add-on shipping (honey is pickup) starts at $11',
+  checkoutPickupLine: `Pickup in ${PICKUP_LOCATION} (free)`,
+  checkoutShippingHoney: 'Virginia shipping (calculated at checkout)',
+  checkoutShippingOther: 'Shipping (calculated at checkout)',
+  checkoutShippingAccessory: 'Kitchen add-on shipping (supplier dropship)',
+  checkoutShippingSplit: 'Kitchen add-on shipping (honey is pickup)',
   checkoutPickupTotal: 'Pickup total',
-  checkoutShippingNote:
-    'Virginia shipping starts at $11. Honey ships in Virginia only. Summer Lotion and Dipper ship continental US.',
+  checkoutShippingNote: 'Shipping is calculated at checkout by jar count. USPS Ground Advantage: $12 for 1–2 jars, $14 for 3–4, $18 for 5–8 — free on orders $100+. USPS Priority Mail: $16 / $19 / $22. Honey ships in Virginia only. Summer Lotion and Dipper ship continental US.',
   checkoutSplitBanner:
-    'Split fulfillment: honey gift sets stay pickup at the house (text or email to schedule). Kitchen add-ons ship separately to the address below — a supplier dropships them from overseas (often China; typically 2–4 weeks). Hiveborn does not inventory or ship the lids.',
+    'Split fulfillment: honey gift sets stay pickup in New Market, VA (we’ll text you the address and time). Kitchen add-ons ship separately to the address below — a supplier dropships them from overseas (often China; typically 2–4 weeks). Hiveborn does not inventory or ship the lids.',
   checkoutAccessoryOnlyNote:
     'Kitchen add-ons cannot be picked up. Enter the ship-to address — the supplier dropships from overseas (often China). Typical delivery 2–4 weeks.',
-  checkoutAddressHoney: 'Pickup / Contact Information',
+  checkoutAddressHoney: 'Contact information (we’ll text you pickup details)',
   checkoutAddressShip: 'Shipping Address',
   checkoutAddressSplit: 'Ship-to address for kitchen add-ons (also used as pickup contact)',
-  honeyOutsideVa: 'Honey cannot ship outside Virginia. Choose pickup at the house or a VA address.',
-  honeyOutsideVaAlert: 'Honey can only be shipped to Virginia. Choose pickup at the house or a VA address.',
+  honeyOutsideVa: `Honey cannot ship outside Virginia. Choose free pickup in ${PICKUP_LOCATION} or a VA address.`,
+  honeyOutsideVaAlert: `Honey can only be shipped to Virginia. Choose free pickup in ${PICKUP_LOCATION} or a VA address.`,
   continentalOnly: 'We only ship lotion and dippers in the continental US.',
-  checkoutPickupFooter: `Pickup at the house is free — ${PICKUP_CONTACT} to schedule. Hours vary; text or email first. No shipping charged for pickup items. You’ll pay on Stripe first.`,
-  checkoutPickupAfterPay: `After you pay, ${PICKUP_CONTACT} to schedule honey / house-item pickup. Hours vary.`,
-  checkoutShipFooter: 'Virginia shipping starts at $11. Honey products only to Virginia.',
+  checkoutPickupFooter: `Pickup in ${PICKUP_LOCATION} is free — no shipping charged. You’ll pay on Stripe first. ${PICKUP_TEXT_NOTE}`,
+  checkoutPickupAfterPay: `After you pay, we'll text you the pickup address and time. You can also ${PICKUP_CONTACT}.`,
+  checkoutShipFooter: 'Choose USPS Ground Advantage or Priority Mail on the secure Stripe page. Honey ships to Virginia only.',
   checkoutSplitFooter:
-    'You will pay once. Honey / house items are marked for pickup (text or email to schedule). Kitchen add-ons ship separately to your address via supplier dropship.',
-  successPickup: `Your order is marked for pickup at the house (${PICKUP_ADDRESS}). ${PICKUP_SCHEDULE_NOTE} Hours vary. When you pick up you can see the bees that made it. ${PICKUP_MAPS_NOTE}`,
+    'You will pay once. Honey / house items are marked for pickup in New Market, VA (we’ll text you the address and time). Kitchen add-ons ship separately to your address via supplier dropship.',
+  successPickup: `Your order is marked for pickup in ${PICKUP_LOCATION}. ${PICKUP_SCHEDULE_NOTE} When you pick up you can see the bees that made it.`,
   successShip: 'Hiveborn items will be shipped to the address you provided.',
   successDropship:
     'Kitchen add-ons will be supplier-dropshipped to the address you provided, typically from China or another international warehouse (about 2–4 weeks). Hiveborn does not inventory or ship these items.',
-  successSplit: `Split fulfillment: honey gift sets are pickup at the house (${PICKUP_ADDRESS}). ${PICKUP_SCHEDULE_NOTE} Kitchen add-ons ship separately to your address via supplier dropship (often China; typically 2–4 weeks).`,
-  successPickupBadge: '✓ Pickup at the house (text or email to schedule)',
+  successSplit: `Split fulfillment: honey gift sets are pickup in ${PICKUP_LOCATION}. ${PICKUP_SCHEDULE_NOTE} Kitchen add-ons ship separately to your address via supplier dropship (often China; typically 2–4 weeks).`,
+  successPickupBadge: `✓ Pickup in ${PICKUP_LOCATION} (we’ll text you the address and time)`,
   successShipBadge: '✓ Hiveborn shipping',
   successDropshipBadge: '✓ Kitchen add-ons: supplier dropship',
   successSplitBadge: '✓ Split fulfillment — honey pickup + lids ship',
-  webhookPickup: `Pickup at the house (${PICKUP_ADDRESS}). ${PICKUP_SCHEDULE_NOTE} Hours vary. When you pick up you can see the bees that made it. ${PICKUP_MAPS_NOTE}`,
+  webhookPickup: `Pickup in ${PICKUP_LOCATION}. ${PICKUP_SCHEDULE_NOTE} When you pick up you can see the bees that made it.`,
   webhookDropship:
     'Kitchen add-ons (not Hiveborn honey) are supplier-dropshipped separately to this address. Packages typically ship from China or another international warehouse (about 2–4 weeks). Hiveborn does not inventory or ship these items.',
   webhookSplitBanner:
-    'Split fulfillment: honey / house items are pickup at the house (text or email to schedule). Kitchen add-ons ship separately via supplier dropship.',
+    'Split fulfillment: honey / house items are pickup in New Market, VA (we’ll text you the address and time). Kitchen add-ons ship separately via supplier dropship.',
   splitFulfillmentHeadline:
-    'This order has split fulfillment: honey / house items are pickup at the house; kitchen add-ons ship separately via supplier dropship.',
+    'This order has split fulfillment: honey / house items are pickup in New Market, VA; kitchen add-ons ship separately via supplier dropship.',
   lineAccessoryFulfillment: 'Ships separately — supplier dropship',
-  linePickupFulfillment: 'Pickup at the house',
+  linePickupFulfillment: `Pickup in ${PICKUP_LOCATION}`,
   lineHoneyShipFulfillment: 'Hiveborn ships (Virginia only)',
   lineHouseShipFulfillment: 'Hiveborn ships (continental US)',
   comingSoon: 'Coming soon',

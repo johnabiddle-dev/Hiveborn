@@ -91,6 +91,7 @@ export const COPY = {
   lineHoneyShipFulfillment: 'Hiveborn ships (Virginia only)',
   lineHouseShipFulfillment: 'Hiveborn ships (continental US)',
   comingSoon: 'Coming soon',
+  soldOut: 'Sold out',
   giftSetNote:
     'Hive Fresh honey is sold as a gift set: mason jar of honey, gift bag, and wooden dipper.',
   kitchenBadge: 'Kitchen add-on',

@@ -68,7 +68,10 @@ test('catalog guards stay in place', () => {
   assert.equal(getProductById(3)?.price, 2500);
   assert.equal(getProductById(2)?.price, 1500);
   assert.equal(getProductById(8)?.price, 1200);
-  assert.equal(getProductById(8)?.inStock, true);
+  assert.equal(getProductById(8)?.inStock, false); // 6 oz hex sold out
+  assert.equal(getProductById(8)?.soldOut, true);
+  assert.equal(getProductById(2)?.inStock, true);
+  assert.equal(getProductById(3)?.inStock, true);
   assert.equal(getProductById(4)?.inStock, false);
   assert.equal(getProductById(6)?.published, false);
   assert.equal(getProductById(7)?.published, false);

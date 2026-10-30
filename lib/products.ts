@@ -12,6 +12,8 @@ export interface Product {
   image: string; // URL or path — primary / web crop
   cardImage?: string; // optional square crop for shop cards and cart thumbs
   inStock: boolean;
+  /** When true (and inStock is false), the SKU shows "Sold out" instead of "Coming soon". */
+  soldOut?: boolean;
   kind: ProductKind;
   fulfillment: Fulfillment;
   /** Optional Amazon reference ASIN for sourcing — not a buy link. */
@@ -73,7 +75,8 @@ export const PRODUCTS: Product[] = [
       'Gift set: a 6 oz hexagonal glass jar of honey with a gold lid and gold bee decal, plus a wooden dipper, in a gold organza drawstring bag. Small batch — only 12 made. Fresh, hand-harvested from the hive.',
     image: '/images/hero-6oz-hex-web.jpg',
     cardImage: '/images/hero-6oz-hex-square.jpg',
-    inStock: true,
+    inStock: false,
+    soldOut: true,
     kind: 'honey',
     fulfillment: 'pickup_or_va_ship',
   },
@@ -171,6 +174,11 @@ export function isAccessoryProduct(id: number): boolean {
 
 export function isHouseProduct(id: number): boolean {
   return getProductById(id)?.kind === 'house';
+}
+
+/** Badge / disabled-button label for a SKU that cannot be bought right now. */
+export function unavailableLabel(product: Pick<Product, 'soldOut'>): string {
+  return product.soldOut ? COPY.soldOut : COPY.comingSoon;
 }
 
 export function isPurchasable(id: number): boolean {

@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { PickupConversionCta } from '@/app/pickup-conversion-cta';
 import { COPY } from '@/lib/copy';
 import { withPickupCopyLinks } from '@/lib/pickup-maps-link';
-import { getPublishedProductBySlug, PUBLISHED_PRODUCTS } from '@/lib/products';
+import { getPublishedProductBySlug, PUBLISHED_PRODUCTS, unavailableLabel } from '@/lib/products';
 import AddToCartButton from './add-to-cart-button';
 
 type Props = { params: Promise<{ slug: string }> };
@@ -62,7 +62,7 @@ export default async function ProductPage({ params }: Props) {
           )}
           {!product.inStock && (
             <span className="inline-block text-[11px] font-semibold bg-zinc-800 text-white px-2.5 py-1 rounded-full mb-3 ml-2">
-              {COPY.comingSoon}
+              {unavailableLabel(product)}
             </span>
           )}
           <h1 className="text-3xl sm:text-4xl font-semibold tracking-tighter">{product.name}</h1>

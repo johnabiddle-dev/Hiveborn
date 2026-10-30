@@ -65,6 +65,8 @@ export default function SuccessContent() {
                   accessoriesShip: true,
                   isSplitFulfillment: true,
                   shippingLineCount: 1,
+                  shippedJarCount: 0,
+                  accessoryLineCount: 1,
                 })
               : data.isPickup
                 ? successFulfillmentMessage({
@@ -79,6 +81,8 @@ export default function SuccessContent() {
                     accessoriesShip: false,
                     isSplitFulfillment: false,
                     shippingLineCount: 0,
+                    shippedJarCount: 0,
+                    accessoryLineCount: 0,
                   })
                 : 'Your order will be shipped to the address you provided.';
 
@@ -125,7 +129,7 @@ export default function SuccessContent() {
               )}
               {!order.plan && order.isPickup !== undefined && (
                 <div className="mb-1 font-medium">
-                  {order.isPickup ? '✓ Pickup at the house (email or text to schedule)' : '✓ Shipping'}
+                  {order.isPickup ? '✓ Pickup in New Market, VA (we’ll text you the address and time)' : '✓ Shipping'}
                 </div>
               )}
               {order.shippingAddress?.address && (

@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     try {
       // Retrieve full session with line items for accurate order details
       const fullSession = await stripe.checkout.sessions.retrieve(session.id, {
-        expand: ['line_items'],
+        expand: ['line_items', 'shipping_cost.shipping_rate'],
       });
 
       const metadata = (fullSession.metadata || {}) as Record<string, string>;
@@ -64,9 +64,22 @@ export async function POST(req: NextRequest) {
         return `${qty}× ${name} — $${amount.toFixed(2)}`;
       }).join('\n');
 
+      // Hiveborn shipping is charged via Checkout shipping_options (not a line item).
+      const shippingRate = fullSession.shipping_cost?.shipping_rate;
+      const shippingMethodName =
+        shippingRate && typeof shippingRate === 'object' ? shippingRate.display_name || '' : '';
+      const shippingAmount = (fullSession.shipping_cost?.amount_total || 0) / 100;
+      const shippingLine = shippingMethodName
+        ? `\n${shippingMethodName} — ${shippingAmount === 0 ? 'Free' : `$${shippingAmount.toFixed(2)}`}`
+        : '';
+
       const total = (fullSession.amount_total || 0) / 100;
       const addressText = formatAddress(shippingAddress);
-      const fulfillment = fulfillmentCustomerText(plan, addressText);
+      const fulfillment = fulfillmentCustomerText(
+        plan,
+        addressText,
+        plan.honeyShips || plan.houseShips ? shippingMethodName || undefined : undefined
+      );
 
       const emailHtml = `
         <div style="font-family: system-ui, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -76,7 +89,7 @@ export async function POST(req: NextRequest) {
           ${plan.isSplitFulfillment ? `<p style="background:#fffbeb;border:1px solid #f59e0b;padding:12px;border-radius:12px;"><strong>Split fulfillment:</strong> ${COPY.webhookSplitBanner}</p>` : ''}
           
           <h2 style="margin-top: 24px; font-size: 18px;">Order Details</h2>
-          <pre style="background: #f5f5f5; padding: 16px; border-radius: 8px; white-space: pre-wrap;">${items}</pre>
+          <pre style="background: #f5f5f5; padding: 16px; border-radius: 8px; white-space: pre-wrap;">${items}${shippingLine}</pre>
           
           <p><strong>Total: $${total.toFixed(2)}</strong></p>
           

@@ -74,14 +74,19 @@ export function resolveCartItems(items: unknown): ResolveResult {
   };
 }
 
-// Server-authoritative shipping. Matches the client order-summary formula
-// (per distinct shipping line item) so the charged total equals what the customer saw.
-// Pickup honey/house items are excluded; dropship accessories always count.
-export function calculateShippingCents(numShippingLineItems: number): number {
-  if (numShippingLineItems === 0) return 0;
-  const base = 1100; // minimum $11.00
-  const perAdditional = 400; // +$4 per additional item (simple volume proxy)
-  return base + (numShippingLineItems - 1) * perAdditional;
+// Hiveborn's own shipping (honey + house items) is priced by total jar count in
+// lib/shipping.ts and charged through Stripe Checkout shipping_options.
+//
+// Kitchen add-ons (currently unpublished) are supplier-dropshipped and keep their
+// legacy flat charge as a separate line item: $11 for the first distinct add-on,
+// +$4 per additional distinct add-on.
+export function calculateDropshipCents(accessoryLineCount: number): number {
+  if (accessoryLineCount <= 0) return 0;
+  return 1100 + (accessoryLineCount - 1) * 400;
+}
+
+export function subtotalCents(items: Array<{ price: number; quantity: number }>): number {
+  return items.reduce((sum, i) => sum + i.price * i.quantity, 0);
 }
 
 export function toStripeLineItems(resolvedItems: ResolvedItem[]): StripeLineItem[] {

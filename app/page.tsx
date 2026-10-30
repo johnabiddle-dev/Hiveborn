@@ -11,6 +11,7 @@ import {
   HOUSE_PRODUCTS,
   Product,
   isPurchasable,
+  unavailableLabel,
   productPath,
   productShipNote,
   withCatalogFields,
@@ -51,7 +52,7 @@ function ProductCard({
         )}
         {!product.inStock && (
           <span className={`absolute top-3 z-10 bg-zinc-800 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full ${featured || accessory ? 'right-3' : 'left-3'}`}>
-            {COPY.comingSoon}
+            {unavailableLabel(product)}
           </span>
         )}
         <img
@@ -87,7 +88,7 @@ function ProductCard({
             aria-disabled="true"
             className="mt-auto w-full bg-zinc-200 text-zinc-600 py-3 rounded-2xl font-medium mt-6 cursor-not-allowed"
           >
-            {COPY.comingSoon}
+            {unavailableLabel(product)}
           </button>
         )}
       </div>

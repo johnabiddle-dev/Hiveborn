@@ -4,8 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { track } from '@vercel/analytics';
 import { Plus } from 'lucide-react';
-import { COPY } from '@/lib/copy';
-import { isPurchasable, type Product } from '@/lib/products';
+import { isPurchasable, unavailableLabel, type Product } from '@/lib/products';
 
 export default function AddToCartButton({ product }: { product: Product }) {
   const router = useRouter();
@@ -19,7 +18,7 @@ export default function AddToCartButton({ product }: { product: Product }) {
         aria-disabled="true"
         className="w-full bg-zinc-200 text-zinc-600 py-3 rounded-2xl font-medium cursor-not-allowed"
       >
-        {COPY.comingSoon}
+        {unavailableLabel(product)}
       </button>
     );
   }

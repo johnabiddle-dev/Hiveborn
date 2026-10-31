@@ -167,7 +167,7 @@ export default function HivebornShop() {
             className="h-16 sm:h-28 w-auto mx-auto mb-4 sm:mb-8"
           />
           <p className="text-xl sm:text-2xl font-medium text-zinc-700 max-w-md mx-auto tracking-tight">
-            Local. Raw. Unfiltered. Perfect.
+            Give the gift of summer this winter.
           </p>
           <p className="text-sm sm:text-base text-zinc-600 mt-2 mb-5 sm:mb-8">
             {COPY.heroSub}

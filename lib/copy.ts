@@ -21,7 +21,7 @@ export const STICKY_MOBILE_CTA = `Order · Questions? Text ${CONTACT_PHONE}`;
 export const COPY = {
   metaTitle: 'Hiveborn — Raw honey from New Market, VA',
   metaDescription: `Raw, unfiltered honey from New Market, Virginia. ${PICKUP_OR_SHIP_TAGLINE} Questions? ${PICKUP_CONTACT}.`,
-  heroSub: 'Raw honey from New Market, Virginia.',
+  heroSub: 'Local, raw, unfiltered honey from New Market, Virginia.',
   heroPickup: CONVERSION_CTA,
   conversionCta: CONVERSION_CTA,
   stickyMobileCta: STICKY_MOBILE_CTA,

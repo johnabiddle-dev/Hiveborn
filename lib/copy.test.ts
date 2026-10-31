@@ -69,6 +69,7 @@ test('homepage, product, footer, and cart pickup copy include the phone', () => 
     honeyShipNote: COPY.honeyShipNote,
     otherShipNote: COPY.otherShipNote,
     conversionCta: COPY.conversionCta,
+    orderContactBanner: COPY.orderContactBanner,
     stickyMobileCta: COPY.stickyMobileCta,
     pickupShippingBlurb: COPY.pickupShippingBlurb,
     cartPageNote: COPY.cartPageNote,

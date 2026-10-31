@@ -16,8 +16,9 @@ import {
   productShipNote,
   withCatalogFields,
 } from '@/lib/products';
-import { PickupConversionCta } from '@/app/pickup-conversion-cta';
+import { OrderContactStrip, PickupConversionCta } from '@/app/pickup-conversion-cta';
 import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_TEL, COPY, PICKUP_LOCATION, PICKUP_OR_SHIP_TAGLINE, PICKUP_TEXT_NOTE } from '@/lib/copy';
+import { markOrderIntent } from '@/lib/order-intent';
 import { lineFulfillmentLabel, planFulfillment } from '@/lib/fulfillment';
 import { withPickupCopyLinks } from '@/lib/pickup-maps-link';
 
@@ -117,6 +118,7 @@ export default function HivebornShop() {
 
   const addToCart = (product: Product) => {
     if (!product.inStock) return;
+    markOrderIntent();
     track('add_to_cart', {
       productName: product.name,
       price: product.price / 100,
@@ -178,9 +180,6 @@ export default function HivebornShop() {
           >
             Shop Now
           </a>
-          <div className="mt-5 max-w-lg mx-auto text-left">
-            <PickupConversionCta />
-          </div>
         </div>
       </div>
 
@@ -188,22 +187,16 @@ export default function HivebornShop() {
       <div className="max-w-2xl mx-auto px-6 py-10 sm:py-12 text-sm sm:text-base text-zinc-700 leading-relaxed">
         <h2 className="text-xl font-semibold tracking-tight text-black mb-3">About the farm</h2>
         <p>
-          We keep bees in New Market, Virginia, and harvest by hand. The honey is raw and unfiltered. Hive Fresh honey is sold as a gift set: mason jar of honey, gift bag, and wooden dipper. Reaper Infused Hot Honey is our spicy jar. {PICKUP_OR_SHIP_TAGLINE} Pickup in {PICKUP_LOCATION} is free. {PICKUP_TEXT_NOTE} Honey orders ship inside Virginia only. Summer Lotion and Honey Dippers ship continental US. Questions:{' '}
-          <a href={`mailto:${CONTACT_EMAIL}`} className="underline">{CONTACT_EMAIL}</a>
-          {' or text '}
-          <a href={`tel:${CONTACT_PHONE_TEL}`} className="underline">{CONTACT_PHONE}</a>.
+          We keep bees in New Market, Virginia, and harvest by hand. The honey is raw and unfiltered. Hive Fresh honey is sold as a gift set: mason jar of honey, gift bag, and wooden dipper. Reaper Infused Hot Honey is our spicy jar. {PICKUP_OR_SHIP_TAGLINE} Pickup in {PICKUP_LOCATION} is free. {PICKUP_TEXT_NOTE} Honey orders ship inside Virginia only. Summer Lotion and Honey Dippers ship continental US.
         </p>
       </div>
 
       {/* Products */}
       <div id="products" className="max-w-6xl mx-auto px-6 pb-16">
         <h2 className="text-4xl font-semibold tracking-tighter mb-2 text-center">Our Products</h2>
-        <p className="text-center text-zinc-600 mb-6 max-w-md mx-auto">
+        <p className="text-center text-zinc-600 mb-10 max-w-md mx-auto">
           Carefully crafted from the hive. {COPY.giftSetNote}
         </p>
-        <div className="max-w-lg mx-auto mb-10">
-          <PickupConversionCta compact />
-        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {HONEY_PRODUCTS.map((product) => (
@@ -238,6 +231,10 @@ export default function HivebornShop() {
             ))}
           </div>
         </div>
+
+        <div className="mt-16 max-w-lg mx-auto">
+          <PickupConversionCta />
+        </div>
       </div>
 
       {/* Cart Drawer */}
@@ -255,6 +252,14 @@ export default function HivebornShop() {
               </div>
               <button onClick={() => setIsCartOpen(false)}><X /></button>
             </div>
+
+            {cart.length > 0 && (
+              <div className="px-6 pt-4">
+                <div className="rounded-2xl border border-amber-300 bg-amber-50 p-3">
+                  <OrderContactStrip stacked />
+                </div>
+              </div>
+            )}
 
             {cart.length === 0 ? (
               <div className="flex-1 flex items-center justify-center text-zinc-500">

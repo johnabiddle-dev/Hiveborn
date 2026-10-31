@@ -75,12 +75,9 @@ export default async function ProductPage({ params }: Props) {
               {COPY.accessoryPageShipNote}
             </p>
           ) : (
-            <>
-              <p className="text-sm text-zinc-600 mt-5 leading-relaxed">
-                {withPickupCopyLinks(product.kind === 'honey' ? COPY.honeyShipNote : COPY.otherShipNote)}
-              </p>
-              <PickupConversionCta compact className="mt-4" />
-            </>
+            <p className="text-sm text-zinc-600 mt-5 leading-relaxed">
+              {withPickupCopyLinks(product.kind === 'honey' ? COPY.honeyShipNote : COPY.otherShipNote)}
+            </p>
           )}
           <div className="mt-8">
             <AddToCartButton product={product} />
@@ -90,6 +87,7 @@ export default async function ProductPage({ params }: Props) {
               ? withPickupCopyLinks('Questions about honey pickup still go to johnabiddle@gmail.com / 540-400-4586. This lid ships from a supplier, not from the house.')
               : COPY.giftSetNote}
           </p>
+          {!accessory && <PickupConversionCta compact className="mt-4" />}
         </div>
       </div>
     </div>

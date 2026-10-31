@@ -13,9 +13,11 @@ export const PICKUP_SCHEDULE_NOTE = `${PICKUP_TEXT_NOTE} Questions? ${PICKUP_CON
 export const PICKUP_OR_SHIP_TAGLINE =
   'Pick up at the farm and meet the bees, or have it shipped anywhere in Virginia. Shipping is calculated at checkout.';
 
-/** IG/FB conversion line: text is equal to email. */
+/** IG/FB conversion line: text is equal to email. Shown below the products, not in the hero. */
 export const CONVERSION_CTA = `Order at hiveborn.com → Pickup in ${PICKUP_LOCATION}. ${PICKUP_TEXT_NOTE} Questions? ${PICKUP_CONTACT}.`;
 export const STICKY_MOBILE_CTA = `Order · Questions? Text ${CONTACT_PHONE}`;
+/** Shown at the top only after a visitor clicks to order, and on checkout. */
+export const ORDER_CONTACT_BANNER = `Questions while you order? ${PICKUP_CONTACT}.`;
 
 /** Customer-facing pickup + shipping copy. Pickup is order-online; John texts the address and time after the order — not walk-in. */
 export const COPY = {
@@ -24,6 +26,7 @@ export const COPY = {
   heroSub: 'Local, raw, unfiltered honey from New Market, Virginia.',
   heroPickup: CONVERSION_CTA,
   conversionCta: CONVERSION_CTA,
+  orderContactBanner: ORDER_CONTACT_BANNER,
   stickyMobileCta: STICKY_MOBILE_CTA,
   honeyShipNote: `${PICKUP_OR_SHIP_TAGLINE} Pickup in ${PICKUP_LOCATION} is free. ${PICKUP_TEXT_NOTE} Questions? ${PICKUP_CONTACT}.`,
   otherShipNote: `Ships continental US (shipping calculated at checkout), or free pickup in ${PICKUP_LOCATION}. ${PICKUP_TEXT_NOTE} Questions? ${PICKUP_CONTACT}.`,

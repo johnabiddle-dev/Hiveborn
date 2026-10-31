@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { track } from '@vercel/analytics';
 import { Plus } from 'lucide-react';
+import { markOrderIntent } from '@/lib/order-intent';
 import { isPurchasable, unavailableLabel, type Product } from '@/lib/products';
 
 export default function AddToCartButton({ product }: { product: Product }) {
@@ -24,6 +25,7 @@ export default function AddToCartButton({ product }: { product: Product }) {
   }
 
   const addToCart = () => {
+    markOrderIntent();
     track('add_to_cart', {
       productName: product.name,
       price: product.price / 100,

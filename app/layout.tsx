@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
-import { StickyMobilePickupBar } from "@/app/pickup-conversion-cta";
+import { OrderContactBanner, StickyMobilePickupBar } from "@/app/order-contact-banner";
 import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_TEL, COPY } from "@/lib/copy";
 
 const geistSans = Geist({
@@ -55,6 +55,7 @@ export default function RootLayout({
             </div>
           </div>
         </nav>
+        <OrderContactBanner />
         {children}
         <Analytics />
         <StickyMobilePickupBar />

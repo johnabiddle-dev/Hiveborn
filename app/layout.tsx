@@ -4,6 +4,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { OrderContactBanner, StickyMobilePickupBar } from "@/app/order-contact-banner";
+import { PreferredSourceButton } from "@/app/preferred-source-button";
+import { SocialLinks } from "@/app/social-links";
 import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_TEL, COPY } from "@/lib/copy";
 
 const geistSans = Geist({
@@ -49,8 +51,7 @@ export default function RootLayout({
               <Link href="/#products" className="hover:underline">Shop</Link>
               <Link href="/cart" className="hover:underline">Cart</Link>
               <span className="flex items-center gap-4 hidden sm:flex text-sm">
-                <a href="https://www.instagram.com/hivebornhoney/" target="_blank" rel="noopener noreferrer" className="hover:underline">Instagram</a>
-                <a href="https://www.facebook.com/p/Hiveborn-61578893080880/" target="_blank" rel="noopener noreferrer" className="hover:underline">Facebook</a>
+                <SocialLinks />
               </span>
             </div>
           </div>
@@ -60,7 +61,7 @@ export default function RootLayout({
         <Analytics />
         <StickyMobilePickupBar />
         <footer className="border-t mt-auto py-8 text-xs text-zinc-500">
-          <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               {COPY.footerPickup}{' '}
               <a href={`tel:${CONTACT_PHONE_TEL}`} className="hover:underline">{CONTACT_PHONE}</a>
@@ -68,10 +69,12 @@ export default function RootLayout({
               <a href={`mailto:${CONTACT_EMAIL}`} className="hover:underline">{CONTACT_EMAIL}</a>
               <div className="mt-1">{COPY.footerHoney}</div>
             </div>
-            <span className="flex items-center gap-4">
-              <a href="https://www.instagram.com/hivebornhoney/" target="_blank" rel="noopener noreferrer" className="hover:underline">Instagram</a>
-              <a href="https://www.facebook.com/p/Hiveborn-61578893080880/" target="_blank" rel="noopener noreferrer" className="hover:underline">Facebook</a>
-            </span>
+            <div className="flex flex-col items-start sm:items-end gap-3">
+              <PreferredSourceButton />
+              <span className="flex items-center gap-4">
+                <SocialLinks />
+              </span>
+            </div>
           </div>
         </footer>
       </body>

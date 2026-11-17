@@ -65,6 +65,11 @@ test('out-of-stock Reaper cannot resolve', () => {
   assert.equal(resolved.ok, false);
 });
 
+test('retired 6 oz gift set is rejected at checkout', () => {
+  const resolved = resolveCartItems([{ id: 8, quantity: 1, price: 1200 }]);
+  assert.equal(resolved.ok, false);
+});
+
 test('unpublished kitchen add-ons cannot resolve for checkout', () => {
   const pumpLids = resolveCartItems([{ id: 6, quantity: 1, price: 1 }]);
   assert.equal(pumpLids.ok, false);
@@ -95,7 +100,7 @@ test('jar count is the sum of quantities, not distinct products', () => {
   const plan = planFulfillment([{ id: 3, quantity: 6 }], false);
   assert.equal(plan.shippingLineCount, 1);
   assert.equal(plan.shippedJarCount, 6);
-  const mixed = planFulfillment([{ id: 3, quantity: 2 }, { id: 2, quantity: 1 }, { id: 8, quantity: 1 }], false);
+  const mixed = planFulfillment([{ id: 3, quantity: 2 }, { id: 2, quantity: 1 }, { id: 1, quantity: 1 }], false);
   assert.equal(mixed.shippedJarCount, 4);
 });
 

@@ -15,7 +15,7 @@ import {
   planFulfillment,
   successFulfillmentMessage,
 } from './fulfillment';
-import { ACCESSORY_PRODUCTS, getProductById } from './products';
+import { ACCESSORY_PRODUCTS, HONEY_PRODUCTS, PUBLISHED_PRODUCTS, getProductById, isPurchasable, unavailableLabel } from './products';
 
 test('conversion CTA puts text number beside email and says pickup in New Market', () => {
   assert.match(CONVERSION_CTA, new RegExp(CONTACT_PHONE));
@@ -113,12 +113,18 @@ test('footer copy tells people to text or email', () => {
 test('catalog guards stay in place', () => {
   assert.equal(getProductById(3)?.price, 2500);
   assert.equal(getProductById(2)?.price, 1500);
-  assert.equal(getProductById(8)?.price, 1200);
-  assert.equal(getProductById(8)?.inStock, false); // 6 oz hex sold out
-  assert.equal(getProductById(8)?.soldOut, true);
   assert.equal(getProductById(2)?.inStock, true);
   assert.equal(getProductById(3)?.inStock, true);
+  assert.equal(isPurchasable(2), true);
+  assert.equal(isPurchasable(3), true);
   assert.equal(getProductById(4)?.inStock, false);
+  assert.equal(isPurchasable(4), false);
+  assert.equal(unavailableLabel(getProductById(4)!), COPY.comingSoon);
+  // Retired 6 oz / $12 hex gift set (former id 8) is gone from the public catalog.
+  assert.equal(getProductById(8), undefined);
+  assert.equal(isPurchasable(8), false);
+  assert.equal(HONEY_PRODUCTS.some((product) => product.id === 8 || /6\s*oz/i.test(product.name) || product.price === 1200), false);
+  assert.equal(PUBLISHED_PRODUCTS.some((product) => /6\s*oz/i.test(product.name) || product.price === 1200), false);
   assert.equal(getProductById(6)?.published, false);
   assert.equal(getProductById(7)?.published, false);
   assert.equal(ACCESSORY_PRODUCTS.length, 0);

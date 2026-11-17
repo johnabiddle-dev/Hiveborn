@@ -184,6 +184,8 @@ export default function HivebornShop() {
         </div>
       </div>
 
+      <HiveActionSection />
+
       {/* About */}
       <div className="max-w-2xl mx-auto px-6 py-10 sm:py-12 text-sm sm:text-base text-zinc-700 leading-relaxed">
         <h2 className="text-xl font-semibold tracking-tight text-black mb-3">About the farm</h2>
@@ -237,8 +239,6 @@ export default function HivebornShop() {
           <PickupConversionCta />
         </div>
       </div>
-
-      <HiveActionSection />
 
       {/* Cart Drawer */}
       {isCartOpen && (

@@ -40,16 +40,18 @@ test('hive action photos are existing farm photos and not the 6 oz set', () => {
   }
 });
 
-test('homepage renders the hive action section after the products', () => {
+test('homepage renders the hive action section directly under the hero', () => {
   const html = renderToStaticMarkup(<HivebornShop />);
   const shopNow = html.indexOf('Shop Now');
   const products = html.indexOf('Our Products');
   const action = html.indexOf(HIVE_ACTION_HEADING);
+  const about = html.indexOf('About the farm');
   const pickupInfo = html.indexOf('Pickup &amp; shipping');
 
-  assert.ok(shopNow >= 0 && products > shopNow, 'Shop Now stays above the products');
-  assert.ok(action > products, 'hive action stays below the products');
-  assert.ok(pickupInfo > action, 'pickup info stays below the hive action section');
+  assert.ok(shopNow >= 0 && action > shopNow, 'hive action follows the hero');
+  assert.ok(about > action, 'about stays below the hive action section');
+  assert.ok(products > action, 'products stay below the hive action section');
+  assert.ok(pickupInfo > products, 'pickup info stays below the products');
   assert.match(html, /\$25\.00/);
   assert.match(html, /\$15\.00/);
   assert.match(html, /Add to Cart/);

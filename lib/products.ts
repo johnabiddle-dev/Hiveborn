@@ -22,7 +22,7 @@ export interface Product {
   published?: boolean;
 }
 
-export const HONEY_PRODUCT_IDS = [2, 3, 4, 8]; // 10 oz gift set, 20 oz gift set, Reaper Infused Hot Honey 1/2 pint, 6 oz hex gift set
+export const HONEY_PRODUCT_IDS = [2, 3, 4]; // 10 oz gift set, 20 oz gift set, Reaper Infused Hot Honey 1/2 pint
 export const ACCESSORY_PRODUCT_IDS = [6, 7];
 export const FEATURED_PRODUCT_ID = 4;
 
@@ -63,20 +63,6 @@ export const PRODUCTS: Product[] = [
     image: '/images/hero-pint-web.jpg',
     cardImage: '/images/hero-pint-square.jpg',
     inStock: true,
-    kind: 'honey',
-    fulfillment: 'pickup_or_va_ship',
-  },
-  {
-    id: 8,
-    slug: 'hive-fresh-honey-6oz-hex-gift-set',
-    name: 'Hive Fresh Honey 6 oz Hex Gift Set',
-    price: 1200,
-    description:
-      'Gift set: a 6 oz hexagonal glass jar of honey with a gold lid and gold bee decal, plus a wooden dipper, in a gold organza drawstring bag. Small batch — only 12 made. Fresh, hand-harvested from the hive.',
-    image: '/images/hero-6oz-hex-web.jpg',
-    cardImage: '/images/hero-6oz-hex-square.jpg',
-    inStock: false,
-    soldOut: true,
     kind: 'honey',
     fulfillment: 'pickup_or_va_ship',
   },

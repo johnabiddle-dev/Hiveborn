@@ -20,6 +20,7 @@ import { OrderContactStrip, PickupConversionCta } from '@/app/pickup-conversion-
 import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_TEL, COPY, PICKUP_LOCATION, PICKUP_OR_SHIP_TAGLINE, PICKUP_TEXT_NOTE } from '@/lib/copy';
 import { markOrderIntent } from '@/lib/order-intent';
 import { lineFulfillmentLabel, planFulfillment } from '@/lib/fulfillment';
+import { HiveActionSection } from '@/app/hive-action';
 import { withPickupCopyLinks } from '@/lib/pickup-maps-link';
 
 interface CartItem extends Product {
@@ -236,6 +237,8 @@ export default function HivebornShop() {
           <PickupConversionCta />
         </div>
       </div>
+
+      <HiveActionSection />
 
       {/* Cart Drawer */}
       {isCartOpen && (
